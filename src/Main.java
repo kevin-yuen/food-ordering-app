@@ -1,7 +1,8 @@
 import component.Admin;
 import component.Food;
 import component.Menu;
-import source.Database;
+import model.Database;
+import model.Global;
 
 import java.util.*;
 
@@ -16,12 +17,17 @@ public class Main {
         HashMap<String, ArrayList<ArrayList<Food>>> foodHashMap;
 
         db.createDBConnection();
+        //System.out.println(db.getCon());
+
         main.drawBoard();
 
         while (true) {
             // get the latest menu
             menu.composeLatestMenu(db);
-            foodHashMap = menu.getFoodHashMap();
+//            foodHashMap = menu.getFoodHashMap();
+            foodHashMap = Global.getFoodHashMap();
+
+            System.out.println(foodHashMap);
 
             int operationCde = 0;   // 0 = no operation; 1 = update menu; 2 = take order
 
@@ -48,6 +54,9 @@ public class Main {
             // update menu operation
             if (operationCde == 1) {
                 ArrayList<String> itemList = new ArrayList<>(foodHashMap.keySet());
+
+                //System.out.println("ITEM LIST: " + itemList);
+
                 String itemSelectMessage = "";
                 String styledItemName;
                 int itemNumber = 1;
@@ -79,10 +88,10 @@ public class Main {
                     }
                     catch (NumberFormatException e) {
                         itemCde = switch (itemSelected.toLowerCase()) {
-                            case "b" -> 1;
-                            case "d" -> 2;
-                            case "dr" -> 3;
-                            case "f" -> 4;
+                            case "f" -> 1;
+                            case "b" -> 2;
+                            case "d" -> 3;
+                            case "dr" -> 4;
                             case "m" -> 5;
                             case "s" -> 6;
                             case "t" -> 7;
@@ -94,6 +103,8 @@ public class Main {
                     if (itemCde == 0) System.out.println("Invalid item. Please try again.");
 
                     if (itemCde >= 1 && itemCde <= 7) {
+                        String itemName = itemList.get(itemCde - 1);
+
                         int operationCdeOnItem = 0;
 
                         // 3. System asks user to enter the operation for the selected item type
@@ -113,11 +124,11 @@ public class Main {
                             }
                             catch (NumberFormatException e) {
                                 operationCdeOnItem = switch (operationOnItem.toLowerCase()) {
-                                    case "u" -> 1;
-                                    case "a" -> 2;
-                                    case "ad" -> 3;
-                                    case "n" -> 4;
-                                    case "ba" -> 5;
+                                    case "u" -> 1;  // update food price
+                                    case "a" -> 2;  // add new food
+                                    case "ad" -> 3; // adjust max quantity of the food
+                                    case "n" -> 4;  // review menu
+                                    case "ba" -> 5; // back to previous page
                                     default -> 0;
                                 };
                             }
@@ -126,7 +137,7 @@ public class Main {
                         }
 
                         if (operationCdeOnItem == 1) {
-
+                            admin.updateFoodPrice(itemName);
                         }
                         else if (operationCdeOnItem == 2) {
 

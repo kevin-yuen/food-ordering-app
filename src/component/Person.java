@@ -52,7 +52,7 @@ public class Person {
         System.out.println(menu);
     }
 
-    public String calculateExtraSpaceToAdd(String value, int maxLenOfAllValues, int totalLen) {
+    private String calculateExtraSpaceToAdd(String value, int maxLenOfAllValues, int totalLen) {
         String refomattedValue = null;
 
         if (value.length() < maxLenOfAllValues) {

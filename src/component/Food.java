@@ -9,17 +9,17 @@ public class Food {
 
     public Food() {}
 
-    public Food(String foodName, double price, int remainQty, int maxQty, boolean isInStock) {
+    public Food(String foodName, double price, int remainQty, int maxQty) {
         this.foodName = foodName;
         this.price = price;
         this.remainQty = remainQty;
         this.maxQty = maxQty;
-        this.isInStock = isInStock;
+        //this.isInStock = isInStock;
     }
 
     // debug
     public String toString() {
-        return this.foodName + ", " + this.price + ", " + this.remainQty + ", " + this.maxQty + ", " + this.isInStock;
+        return this.foodName + ", " + this.price + ", " + this.remainQty + ", " + this.maxQty;
     }
 
     public String getFoodName() {
