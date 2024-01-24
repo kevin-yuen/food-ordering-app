@@ -5,10 +5,9 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 public class Customer extends Person {
-    private String name;
 
-    public Customer() {
-        this.name = "Customer";
+    public Customer(String name) {
+        super(name);
     }
 
     public void addItemToCart() {

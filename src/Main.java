@@ -1,86 +1,69 @@
 import component.Admin;
 import component.Food;
-import component.Menu;
-import model.Database;
-import model.Global;
+import controller.ServerController;
+import general.General;
+import model.MenuModel;
+import service.Database;
+import service.Global;
+import view.MenuView;
 
 import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        int appState = 0;   // 1 = update menu; 2 = take order
+
         Database db = new Database();
-        Main main = new Main();
-        Admin admin = new Admin();
-        Menu menu = new Menu();
-
-        HashMap<String, ArrayList<ArrayList<Food>>> foodHashMap;
-
         db.createDBConnection();
-        //System.out.println(db.getCon());
 
-        main.drawBoard();
+        Admin admin = new Admin("Store Manager");
+        MenuModel menuModel = new MenuModel(db);
+        MenuView menuView = new MenuView();
+        ServerController serverController = new ServerController(menuModel, menuView);
+
+        General.drawBoard();
 
         while (true) {
-            // get the latest menu
-            menu.composeLatestMenu(db);
-//            foodHashMap = menu.getFoodHashMap();
-            foodHashMap = Global.getFoodHashMap();
-
-            System.out.println(foodHashMap);
-
-            int operationCde = 0;   // 0 = no operation; 1 = update menu; 2 = take order
+            String viewRendered = null;
 
             // 1. System asks admin to enter the operation
-            while (operationCde == 0) {
+            while (appState == 0) {
                 System.out.println("Enter the operation you want to perform:" +
                         "\n1. [\u001B[1mU\u001B[0m]pdate menu" +
                         "\n2. [\u001B[1mT\u001B[0m]ake order");
-                admin.enterSystemOption();
-                String operation = admin.getMyRequestedSysOpt();
+                General.setRequestedSysOpt();
+                String operation = General.getRequestedSysOpt();
 
                 try {
                     int tmpOperationCde = Integer.parseInt(operation);
-                    operationCde = tmpOperationCde == 1 ? 1 : (tmpOperationCde == 2 ? 2 : 0);
+                    appState = tmpOperationCde == 1 ? 1 : (tmpOperationCde == 2 ? 2 : 0);
                 }
                 catch (NumberFormatException e) {
-                    operationCde = operation.equalsIgnoreCase("u") ? 1 :
+                    appState = operation.equalsIgnoreCase("u") ? 1 :
                             (operation.equalsIgnoreCase("t") ? 2 : 0);
                 }
 
-                if (operationCde == 0) System.out.println("Invalid operation. Please try again.");
+                if (appState != 0) {
+                    Global.setMenuHashMap(serverController.notifyMenuModelToGetsFromDB());
+                    viewRendered = serverController.renderMainView(appState, Global.getMenuHashMap());
+
+                    System.out.println("CURRENT MENU HASH MAP: " + Global.getMenuHashMap());
+                }
+                else {
+                    serverController.renderErrorView();
+                }
             }
 
             // update menu operation
-            if (operationCde == 1) {
-                ArrayList<String> itemList = new ArrayList<>(foodHashMap.keySet());
-
-                //System.out.println("ITEM LIST: " + itemList);
-
-                String itemSelectMessage = "";
-                String styledItemName;
-                int itemNumber = 1;
-
-                for (var item: itemList) {
-                    // style item name
-                    if (!item.equalsIgnoreCase("drinks")) {
-                        styledItemName = "[\u001B[1m" + item.substring(0,1) + "\u001B[0m]" + item.substring(1);
-                    }
-                    else {
-                        styledItemName = "[\u001B[1m" + item.substring(0,2) + "\u001B[0m]" + item.substring(2);
-                    }
-
-                    itemSelectMessage += itemNumber + ". " + styledItemName + "\n";
-                    itemNumber++;
-                }
-                itemSelectMessage += itemNumber + ". " + "<<[\u001B[1m[Ba\u001B[0m]ck to Previous>>\n";
+            if (appState == 1) {
+                ArrayList<String> itemList = new ArrayList<>(Global.getMenuHashMap().keySet());
                 int itemCde = 0;
 
                 // 2: System asks user to enter the item type to perform operation on
                 while (itemCde == 0) {
-                    System.out.printf("What kind of item do you want to update?\n%s", itemSelectMessage);
-                    admin.enterSystemOption();
-                    String itemSelected = admin.getMyRequestedSysOpt();
+                    System.out.print(viewRendered);
+                    General.setRequestedSysOpt();
+                    String itemSelected = General.getRequestedSysOpt();
 
                     try {
                         int tempItemCde = Integer.parseInt(itemSelected);
@@ -100,11 +83,8 @@ public class Main {
                         };
                     }
 
-                    if (itemCde == 0) System.out.println("Invalid item. Please try again.");
-
                     if (itemCde >= 1 && itemCde <= 7) {
                         String itemName = itemList.get(itemCde - 1);
-
                         int operationCdeOnItem = 0;
 
                         // 3. System asks user to enter the operation for the selected item type
@@ -114,8 +94,8 @@ public class Main {
                                     "\n3. [\u001B[1mAd\u001B[0m]just max quantity" +
                                     "\n4. [\u001B[1mN\u001B[0m]ot sure. Let me review the menu." +
                                     "\n5. <<[\u001B[1m[Ba\u001B[0m]ck to Previous>>");
-                            admin.enterSystemOption();
-                            String operationOnItem = admin.getMyRequestedSysOpt();
+                            General.setRequestedSysOpt();
+                            String operationOnItem = General.getRequestedSysOpt();
 
                             try {
                                 int tempOperationOnItemCde = Integer.parseInt(operationOnItem);
@@ -133,24 +113,51 @@ public class Main {
                                 };
                             }
 
-                            if (operationCdeOnItem == 0) System.out.println("Invalid operation. Please try again.");
-                        }
+                            if (operationCdeOnItem == 1) {
+                                String priceUpdateRequest = admin.updateFoodPrice();
+                                String foodName = priceUpdateRequest.substring(0, priceUpdateRequest.indexOf(':'));
+                                double foodPrice = Double.parseDouble(priceUpdateRequest.substring(
+                                        priceUpdateRequest.indexOf(':')+1));
 
-                        if (operationCdeOnItem == 1) {
-                            admin.updateFoodPrice(itemName);
-                        }
-                        else if (operationCdeOnItem == 2) {
+                                HashMap<String, ArrayList<Food>> dbResponse =
+                                        serverController.notifyMenuModelToUpdatePrice(itemName, foodName, foodPrice);
 
-                        }
-                        else if (operationCdeOnItem == 3) {
+                                if (dbResponse.size() > 0) {
+                                    Global.syncMenuHashMap(dbResponse);
+                                }
+                                operationCdeOnItem = 0;     // reset to perform other operations on the selected item
+                            }
+                            else if (operationCdeOnItem == 2) {
 
-                        }
-                        else if (operationCdeOnItem == 4) {
-                            admin.viewMenu(foodHashMap);
-                        }
-                        else if (operationCdeOnItem == 5) {
+                            }
+                            else if (operationCdeOnItem == 3) {
+                                String maxQtyUpdateRequest = admin.updateFoodMaxQty();
+                                String foodName = maxQtyUpdateRequest.substring(0, maxQtyUpdateRequest.indexOf(':'));
+                                int foodMaxQty = Integer.parseInt(maxQtyUpdateRequest.substring(
+                                        maxQtyUpdateRequest.indexOf(':')+1));
 
+
+                            }
+                            else if (operationCdeOnItem == 4) {
+                                String keyPressed;
+
+                                admin.viewMenu(Global.getMenuHashMap(), serverController);
+                                System.out.print("Press any key to go back to previous menu: ");
+                                General.setRequestedSysOpt();
+                                keyPressed = General.getRequestedSysOpt();
+
+                                if (keyPressed != null) operationCdeOnItem = 0;
+                            }
+                            else if (operationCdeOnItem == 5) {
+
+                            }
+                            else if (operationCdeOnItem == 0) {
+                                serverController.renderErrorView();
+                            }
                         }
+                    }
+                    else if (itemCde == 0) {
+                        serverController.renderErrorView();
                     }
                 }
                 if (itemCde == 8) {
@@ -158,32 +165,11 @@ public class Main {
                 }
             }
             // take order operation
-            else if (operationCde == 2) {
+            else if (appState == 2) {
 
             }
 
             break;
-        }
-    }
-
-    public void drawBoard() {
-        String sysName = "FIVE GUYS FOOD ORDERING SYSTEM";
-        int boardLineCounter = 1;
-
-        while (true) {
-            if (boardLineCounter <= 3) {
-                if (boardLineCounter % 2 != 0) {
-                    System.out.println("-".repeat(38));
-                }
-                else {
-                    System.out.println("|" + " ".repeat(3) + sysName + " ".repeat(3) + "|");
-                }
-
-                boardLineCounter += 1;
-            }
-            else {
-                break;
-            }
         }
     }
 }

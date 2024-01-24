@@ -1,4 +1,4 @@
-package model;
+package service;
 
 import component.Food;
 
@@ -64,7 +64,7 @@ public class Database {
             if (rowCountUpdated >= 1) {
                 String query = String.format("SELECT name, %s, %s, %s FROM food WHERE name = '%s'", price,
                         remainQty, maxQty, arg);
-                updatedFood = fetchRowUpdate(query, name, price, remainQty, maxQty);
+                updatedFood = retrieveUpdatedRow(query, name, price, remainQty, maxQty);
             }
 
             this.con.close();
@@ -76,7 +76,7 @@ public class Database {
         return updatedFood;
     }
 
-    private ArrayList<Food> fetchRowUpdate(String sql, String name, String price, String remainQty,
+    private ArrayList<Food> retrieveUpdatedRow(String sql, String name, String price, String remainQty,
                                                    String maxQty) {
         ArrayList<Food> updatedFood = new ArrayList<>();
 
