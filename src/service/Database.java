@@ -4,6 +4,7 @@ import component.Food;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -64,7 +65,7 @@ public class Database {
             if (rowCountUpdated >= 1) {
                 String query = String.format("SELECT name, %s, %s, %s FROM food WHERE name = '%s'", price,
                         remainQty, maxQty, arg);
-                updatedFood = retrieveUpdatedRow(query, name, price, remainQty, maxQty);
+                updatedFood = retrieveLatestFoodDetails(query, name, price, remainQty, maxQty);
             }
 
             this.con.close();
@@ -76,9 +77,41 @@ public class Database {
         return updatedFood;
     }
 
-    private ArrayList<Food> retrieveUpdatedRow(String sql, String name, String price, String remainQty,
+    public ArrayList<Food> createNewFood(String sql, String newFoodName, String name, String price, String remainQty,
+                                         String maxQty) {
+        ArrayList<Food> newFood = new ArrayList<>();
+        String queryToCheckExistings = String.format("SELECT * FROM food WHERE name = '%s'", newFoodName);
+        createDBConnection();
+
+        try {
+            // check if the new food already exists
+            this.statement = this.con.createStatement();
+            ResultSet rs = this.statement.executeQuery(queryToCheckExistings);
+
+            if (!rs.next()) {
+                this.preparedStatement = this.con.prepareStatement(sql);
+                this.preparedStatement.executeUpdate();
+
+                String queryToGetTheNewFood = String.format("SELECT name, %s, %s, %s FROM food " +
+                                "ORDER BY foodID " +
+                                "DESC LIMIT 1;", price, remainQty, maxQty);
+                newFood = retrieveLatestFoodDetails(queryToGetTheNewFood, name, price, remainQty, maxQty);
+            }
+
+            this.con.close();
+        }
+        catch (SQLException e) {
+            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, e.getMessage(), e);
+        }
+
+        System.out.println("NEW FOOD: " + newFood);
+        return newFood;
+    }
+
+    private ArrayList<Food> retrieveLatestFoodDetails(String sql, String name, String price, String remainQty,
                                                    String maxQty) {
         ArrayList<Food> updatedFood = new ArrayList<>();
+        createDBConnection();
 
         try {
             this.statement = this.con.createStatement();
@@ -99,5 +132,31 @@ public class Database {
         }
 
         return updatedFood;
+    }
+
+    // Retrieve the latest max. quantity of the food
+    //
+    // This function retrieves the latest max. quantity of the food to re-calculate remainQty
+    public HashMap<String, ArrayList<String>> retrieveCurrentQty(String sql, String columnFoodName,
+                                                                 String columnRemainQty, String columnMaxQty) {
+        ArrayList<String> quantities = new ArrayList<>();
+        HashMap<String, ArrayList<String>> foodWithQuantities = new HashMap<>();
+        createDBConnection();
+
+        try {
+            this.statement = this.con.createStatement();
+            ResultSet rs = this.statement.executeQuery(sql);
+
+            while (rs.next()) {
+                quantities.add(rs.getString(columnRemainQty));
+                quantities.add(rs.getString(columnMaxQty));
+
+                foodWithQuantities.put(rs.getString(columnFoodName), quantities);
+            }
+        }
+        catch (SQLException e) {
+            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, e.getMessage(), e);
+        }
+        return foodWithQuantities;
     }
 }

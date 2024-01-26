@@ -7,7 +7,11 @@ public class UpdateResultView {
         System.out.println("Food update success.");
     }
 
-    public void printNoFoodFoundView() {
-        System.out.println("Food not found.");
+    public void printNoUpdateView() {
+        System.out.println("No update has been made.");
+    }
+
+    public void printCreateSuccessView() {
+        System.out.println("Food added successfully.");
     }
 }

@@ -9,7 +9,6 @@ import view.UpdateResultView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class ServerController {
     private MenuModel menuModel;
@@ -30,34 +29,45 @@ public class ServerController {
         return menuModel.getLatestMenuItemsFromDB();
     }
 
-    public void notifyMenuModelToComposeLatestMenu() {}
+    public HashMap<String, ArrayList<Food>> notifyMenuModelToUpdatePrice(String itemName, String foodName,
+                                                                         double requestedPrice) {
+        HashMap<String, ArrayList<Food>> dbResponse = menuModel.sendDBRequestToUpdateFoodDetails(itemName, foodName,
+                requestedPrice, null);
 
-    public void notifyMenuModelToCreateFood() {}
-
-    public HashMap<String, ArrayList<Food>> notifyMenuModelToUpdatePrice(String itemName, String foodName, double price) {
-        HashMap<String, ArrayList<Food>> dbResponse = menuModel.sendDBRequestToUpdateFoodDetails(itemName, foodName, price,
-                null);
-
-        if (dbResponse.size() > 0) {
-            updateResultView.printUpdateSuccessView();
-        }
-        else {
-            updateResultView.printNoFoodFoundView();
-        }
-        return dbResponse;  // {itemName=[foodName, price, remainQty, maxQty]}
+        checkDBResponseToRenderResultView(dbResponse);
+        return dbResponse;
     }
 
-    public HashMap<String, ArrayList<Food>> notifyMenuModelToUpdateMaxQty(String itemName, String foodName, int maxQty) {
-        HashMap<String, ArrayList<Food>> dbResponse = menuModel.sendDBRequestToUpdateFoodDetails(
-                itemName, foodName, null, maxQty);
+    public HashMap<String, ArrayList<Food>> notifyMenuModelToCreateFood(String itemName, String foodName,
+                                                                        double price, int maxQty) {
+        HashMap<String, ArrayList<Food>> dbResponse = menuModel.sendDBRequestToCreateNewFood(itemName, foodName, price,
+                maxQty);
 
         if (dbResponse.size() > 0) {
-            updateResultView.printUpdateSuccessView();
+            renderUpdateResultView().printCreateSuccessView();
         }
         else {
-            updateResultView.printNoFoodFoundView();
+            renderUpdateResultView().printNoUpdateView();
         }
-        return dbResponse;  // {itemName=[foodName, price, remainQty, maxQty]}
+        return dbResponse;
+    }
+
+    public HashMap<String, ArrayList<Food>> notifyMenuModelToUpdateMaxQty(String itemName, String foodName,
+                                                                          int requestedMaxQty) {
+        HashMap<String, ArrayList<Food>> dbResponse = menuModel.sendDBRequestToUpdateFoodDetails(
+                itemName, foodName, null, requestedMaxQty);
+
+        checkDBResponseToRenderResultView(dbResponse);
+        return dbResponse;
+    }
+
+    private void checkDBResponseToRenderResultView(HashMap<String, ArrayList<Food>> dbResponse) {
+        if (dbResponse.size() > 0) {
+            renderUpdateResultView().printUpdateSuccessView();
+        }
+        else {
+            renderUpdateResultView().printNoUpdateView();
+        }
     }
 
     public String renderMainView(int appState, HashMap<String, ArrayList<ArrayList<Food>>> menuHashMap) {
@@ -74,11 +84,15 @@ public class ServerController {
         errorView.printErrorView();
     }
 
-    public String renderItemView(HashMap<String, ArrayList<ArrayList<Food>>> menuHashMap) {
+    private String renderItemView(HashMap<String, ArrayList<ArrayList<Food>>> menuHashMap) {
         return itemView.printItemView(menuHashMap);
     }
 
     public void renderMenuView(HashMap<String, ArrayList<ArrayList<Food>>> foodHashMap) {
         menuView.printMenuView(foodHashMap);
+    }
+
+    private UpdateResultView renderUpdateResultView() {
+        return updateResultView;
     }
 }

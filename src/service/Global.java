@@ -1,7 +1,6 @@
 package service;
 
 import component.Food;
-import controller.ServerController;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,16 +23,19 @@ public class Global {
 
         if (menuHashMap.containsKey(itemName)) {
             ArrayList<ArrayList<Food>> currentFoods = menuHashMap.get(itemName);
+            boolean isFoodExist = false;
 
             for (var currentFoodDetail: currentFoods) {
                 String foodName = currentFoodDetail.get(0).getFoodName();
 
                 if (foodName.equalsIgnoreCase(newFoodDetail.getFoodName())) {
+                    isFoodExist = true;
                     currentFoodDetail.set(0, newFoodDetail);
                 }
             }
+
+            if (!isFoodExist) currentFoods.add(dbResponse.get(itemName));
         }
-        //System.out.println("UPDATED MENU HASH MAP: " + menuHashMap);
     }
 
     public static void setMenuHashMap(HashMap<String, ArrayList<ArrayList<Food>>> latestMenuItems) {

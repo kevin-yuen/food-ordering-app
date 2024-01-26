@@ -69,32 +69,91 @@ public class MenuModel {
         return getMenuHashMap();
     }
 
-    public HashMap<String, ArrayList<Food>> sendDBRequestToUpdateFoodDetails(String itemName, String foodName, Double price,
-                                                            Integer maxQty) {
+    public HashMap<String, ArrayList<Food>> sendDBRequestToUpdateFoodDetails(String itemName, String foodName,
+                                                                             Double requestedPrice,
+                                                                             Integer requestedMaxQty) {
         HashMap<String, ArrayList<Food>> dbResponse = new HashMap<>();
-        Optional oPrice = Optional.ofNullable(price), oMaxQty = Optional.ofNullable(maxQty);
-        String setStat = oPrice.isPresent() ? String.format("f.price = %f", price) :
-                String.format("f.maxQty = %d", maxQty);
+        Optional oPrice = Optional.ofNullable(requestedPrice), oReqMaxQty = Optional.ofNullable(requestedMaxQty);
+        ArrayList<Food> updatedFoodDetail = new ArrayList<>();
 
-        ArrayList<Food> updatedFoodDetail = db.updateFoodDetail(String.format("UPDATE food f " +
+        if (oPrice.isPresent() && !oReqMaxQty.isPresent()) {
+            updatedFoodDetail = db.updateFoodDetail(String.format("UPDATE food f " +
+                            "INNER JOIN item i " +
+                            "SET f.price = %f " +
+                            "WHERE f.name = '%s' " +
+                            "AND f.itemId = i.itemId " +
+                            "AND i.name = '%s';", requestedPrice, foodName, itemName),
+                    foodName, "name", "price",
+                    "remainQty", "maxQty");
+
+            if (updatedFoodDetail.size() > 0) {
+                dbResponse.put(itemName, updatedFoodDetail);
+            }
+        }
+        else if (!oPrice.isPresent() && oReqMaxQty.isPresent()) {
+            // retrieve the current max quantity
+            HashMap<String, ArrayList<String>> currentQtyDetails = db.retrieveCurrentQty(String.format(
+                    "SELECT f.name, f.maxQty, f.remainQty\n" +
+                            "FROM food f\n" +
+                            "INNER JOIN item i\n" +
+                            "ON f.itemId = i.itemId\n" +
+                            "WHERE i.name = '%s'\n" +
+                            "AND f.name = '%s';", itemName, foodName), "name",
+                    "remainQty", "maxQty");
+
+            String food = currentQtyDetails.keySet().iterator().next().toString();
+            int curRemainQty = Integer.parseInt(currentQtyDetails.get(food).get(0)),
+                    curMaxQty = Integer.parseInt(currentQtyDetails.get(food).get(1));
+
+            // update the current max quantity to the requested max qty
+            if (curRemainQty == curMaxQty && curMaxQty < requestedMaxQty ||
+                    curRemainQty == curMaxQty ||
+                    curRemainQty < curMaxQty && curMaxQty < requestedMaxQty ||
+                    curRemainQty < curMaxQty && curMaxQty > requestedMaxQty) {
+                updatedFoodDetail = db.updateFoodDetail(String.format("UPDATE food f " +
                                 "INNER JOIN item i " +
-                                "SET %s " +
+                                "SET f.maxQty = %d " +
                                 "WHERE f.name = '%s' " +
                                 "AND f.itemId = i.itemId " +
-                                "AND i.name = '%s';", setStat, foodName, itemName),
-                foodName, "name", "price",
-                "remainQty", "maxQty");
+                                "AND i.name = '%s';", requestedMaxQty, foodName, itemName),
+                        foodName, "name", "price",
+                        "remainQty", "maxQty");
+            }
 
-//        if (oMaxQty.isPresent()) {
-//            updatedFoodDetail = db.updateFoodDetail(String.format(""),
-//                    foodName, "name", "price",
-//                    "remainQty", "maxQty");
-//        }
-
-        if (updatedFoodDetail.size() > 0) {
-            dbResponse.put(itemName, updatedFoodDetail);
+            if (updatedFoodDetail.size() > 0) {
+                // re-calculate remain quantity since max. quantity has been updated
+                updatedFoodDetail = sendDBRequestToUpdateRemainQty(itemName, food, curMaxQty, requestedMaxQty);
+                dbResponse.put(itemName, updatedFoodDetail);
+            }
         }
         return dbResponse;
+    }
+
+    private ArrayList<Food> sendDBRequestToUpdateRemainQty(String itemName, String foodName, int currentMaxQty,
+                                                           int requestedMaxQty) {
+        ArrayList<Food> updatedRemainQty = db.updateFoodDetail(String.format("UPDATE foodorder.food f\n" +
+                "INNER JOIN foodorder.item i\n" +
+                "SET f.remainQty = (f.remainQty + (%d - %d))\n" +
+                "WHERE i.name = '%s'\n" +
+                "AND f.name = '%s'\n" +
+                "AND f.itemid = i.itemid;", requestedMaxQty, currentMaxQty, itemName, foodName), foodName,
+                "name", "price", "remainQty", "maxQty");
+
+        return updatedRemainQty;
+    }
+
+    public HashMap<String, ArrayList<Food>> sendDBRequestToCreateNewFood(String itemName, String foodName, double price, int maxQty) {
+        HashMap<String, ArrayList<Food>> newFoodHashMap = new HashMap<>();
+        ArrayList<Food> newFood = db.createNewFood(String.format("INSERT INTO foodorder.food (" +
+                        "name, itemId, price, remainQty, maxQty)\n" +
+                        "VALUES ('%s', (\n" +
+                        "SELECT itemId\n" +
+                        "FROM foodorder.item\n" +
+                        "WHERE name = '%s'), %f, %d, %d);", foodName, itemName, price, maxQty, maxQty),
+                foodName, "name", "price", "remainQty", "maxQty");
+
+        if (newFood.size() > 0) newFoodHashMap.put(itemName, newFood);
+        return newFoodHashMap;
     }
 
     private HashMap<String, ArrayList<ArrayList<Food>>> getMenuHashMap() {

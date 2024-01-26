@@ -128,15 +128,34 @@ public class Main {
                                 operationCdeOnItem = 0;     // reset to perform other operations on the selected item
                             }
                             else if (operationCdeOnItem == 2) {
+                                Object[] foodDetails = admin.addFood();
+                                List<Object> foodDetailsObject = Arrays.asList(foodDetails);
 
+                                String foodName = foodDetailsObject.get(0).toString();
+                                double price = Double.parseDouble(foodDetailsObject.get(1).toString());
+                                int maxQty = Integer.parseInt(foodDetailsObject.get(2).toString());
+
+                                HashMap<String, ArrayList<Food>> dbResponse = serverController
+                                        .notifyMenuModelToCreateFood(itemName, foodName, price, maxQty);
+
+                                if (dbResponse.size() > 0) {
+                                    Global.syncMenuHashMap(dbResponse);
+                                }
+                                operationCdeOnItem = 0;     // reset to perform other operations on the selected item
                             }
                             else if (operationCdeOnItem == 3) {
                                 String maxQtyUpdateRequest = admin.updateFoodMaxQty();
-                                String foodName = maxQtyUpdateRequest.substring(0, maxQtyUpdateRequest.indexOf(':'));
-                                int foodMaxQty = Integer.parseInt(maxQtyUpdateRequest.substring(
+                                String reqFoodName = maxQtyUpdateRequest.substring(0, maxQtyUpdateRequest.indexOf(':'));
+                                int reqMaxQty = Integer.parseInt(maxQtyUpdateRequest.substring(
                                         maxQtyUpdateRequest.indexOf(':')+1));
 
+                                HashMap<String, ArrayList<Food>> dbResponse = serverController
+                                        .notifyMenuModelToUpdateMaxQty(itemName, reqFoodName, reqMaxQty);
 
+                                if (dbResponse.size() > 0) {
+                                    Global.syncMenuHashMap(dbResponse);
+                                }
+                                operationCdeOnItem = 0;     // reset to perform other operations on the selected item
                             }
                             else if (operationCdeOnItem == 4) {
                                 String keyPressed;
