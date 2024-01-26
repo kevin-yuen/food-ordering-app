@@ -1,4 +1,5 @@
 import component.Admin;
+import component.Customer;
 import component.Food;
 import controller.ServerController;
 import general.General;
@@ -17,6 +18,7 @@ public class Main {
         db.createDBConnection();
 
         Admin admin = new Admin("Store Manager");
+        Customer customer = new Customer("Customer");
         MenuModel menuModel = new MenuModel(db);
         MenuView menuView = new MenuView();
         ServerController serverController = new ServerController(menuModel, menuView);
@@ -167,25 +169,43 @@ public class Main {
 
                                 if (keyPressed != null) operationCdeOnItem = 0;
                             }
-                            else if (operationCdeOnItem == 5) {
-
-                            }
                             else if (operationCdeOnItem == 0) {
                                 serverController.renderErrorView();
                             }
+                        }
+
+                        if (operationCdeOnItem == 5) {
+                            itemCde = 0;
+                            continue;
                         }
                     }
                     else if (itemCde == 0) {
                         serverController.renderErrorView();
                     }
                 }
+
                 if (itemCde == 8) {
+                    appState = 0;   // reset state of the app to default state
                     continue;
                 }
             }
             // take order operation
             else if (appState == 2) {
+                String adminName = admin.getName();
+                String customerName = customer.getName();
 
+                System.out.printf("\u001B[1m%s\u001B[0m: Welcome to Five Guys, what would you like to have?\n", adminName);
+                customer.viewMenu(Global.getMenuHashMap(), serverController);
+
+                while (true) {
+                    ArrayList<HashMap<String, Integer>> foodsOrdered = new ArrayList<>();
+                    HashMap<String, Integer> foodOrdered = new HashMap<>();
+
+                    // foodOrdered
+                    // [{foodName=quantity},....]
+
+                    break;
+                }
             }
 
             break;

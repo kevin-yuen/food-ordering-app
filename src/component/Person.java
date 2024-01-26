@@ -15,4 +15,8 @@ public class Person {
     public void viewMenu(HashMap<String, ArrayList<ArrayList<Food>>> foodHashMap, ServerController serverController) {
         serverController.renderMenuView(foodHashMap);
     }
+
+    public String getName() {
+        return this.name;
+    }
 }

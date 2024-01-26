@@ -1,9 +1,5 @@
 package component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Scanner;
-
 public class Customer extends Person {
 
     public Customer(String name) {
