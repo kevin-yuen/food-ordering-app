@@ -11,32 +11,32 @@ public class Admin extends Person {
         super(name);
     }
 
-    private String initiateChangeItemOperation() {
-        String foodName;
-
-        while (true) {
-            System.out.print("Enter food name: ");
-            foodName = scanner.nextLine().trim();
-
-            if (foodName.equalsIgnoreCase("")) {
-                System.out.println("Please enter food name.");
-                continue;
-            }
-            break;
-        }
-
-        return foodName;
-    }
+//    private String initiateChangeItemOperation() {
+//        String foodName;
+//
+//        while (true) {
+//            System.out.print("Enter food name: ");
+//            foodName = scanner.nextLine().trim();
+//
+//            if (foodName.equalsIgnoreCase("")) {
+//                System.out.println("Please enter food name.");
+//                continue;
+//            }
+//            break;
+//        }
+//
+//        return foodName;
+//    }
 
     public String updateFoodPrice() {
-        String foodName = initiateChangeItemOperation();
+        String foodName = requestUserFood();
         double foodPrice = getRequestedPrice();
 
         return General.createKeyValueForPriceUpdate(foodName, foodPrice);
     }
 
     public Object[] addFood() {
-        String foodName = initiateChangeItemOperation();
+        String foodName = requestUserFood();
         double price = getRequestedPrice();
         int maxQty = getRequestedMaxQty();
 
@@ -45,7 +45,7 @@ public class Admin extends Person {
     }
 
     public String updateFoodMaxQty() {
-        String foodName = initiateChangeItemOperation();
+        String foodName = requestUserFood();
         int foodMaxQty = getRequestedMaxQty();
 
         return General.createKeyValueForQuantityUpdate(foodName, foodMaxQty);

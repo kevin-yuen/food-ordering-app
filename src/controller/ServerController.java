@@ -2,10 +2,7 @@ package controller;
 
 import component.Food;
 import model.MenuModel;
-import view.ErrorView;
-import view.ItemView;
-import view.MenuView;
-import view.UpdateResultView;
+import view.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,6 +13,7 @@ public class ServerController {
     private ItemView itemView;
     private ErrorView errorView;
     private UpdateResultView updateResultView;
+    private OrderResultView orderResultView;
 
     public ServerController(MenuModel menuModel, MenuView menuView) {
         this.menuModel = menuModel;
@@ -23,6 +21,7 @@ public class ServerController {
         this.itemView = new ItemView();
         this.errorView = new ErrorView();
         this.updateResultView = new UpdateResultView();
+        this.orderResultView = new OrderResultView();
     }
 
     public HashMap<String, ArrayList<ArrayList<Food>>> notifyMenuModelToGetsFromDB() {
@@ -61,6 +60,31 @@ public class ServerController {
         return dbResponse;
     }
 
+    public HashMap<String, Food> notifyMenuModelToUpdateRemainQty(String itemName, String foodName, int reqQty) {
+        HashMap<String, Food> dbResponseUpdatedRemainQty = menuModel.sendDBRequestToUpdateRemainQty(
+                itemName, foodName, reqQty);
+        boolean isSyncWithGlobalRequired = checkDBResponseToRenderOrderResultView(itemName, foodName, reqQty, dbResponseUpdatedRemainQty);
+
+        if (isSyncWithGlobalRequired) {
+            return dbResponseUpdatedRemainQty;
+        }
+        else {
+            return new HashMap<>();
+        }
+    }
+
+    private boolean checkDBResponseToRenderOrderResultView(String itemName, String foodName, int reqQty, HashMap<String, Food> dbResponse) {
+        boolean isSyncWithGlobalRequired = false;
+
+        if (dbResponse.size() > 0) {
+            isSyncWithGlobalRequired = renderOrderResultView().determineViewToShow(itemName, foodName, reqQty);
+        }
+        else {
+            renderOrderResultView().printNoFoodView();
+        }
+        return isSyncWithGlobalRequired;
+    }
+
     private void checkDBResponseToRenderResultView(HashMap<String, ArrayList<Food>> dbResponse) {
         if (dbResponse.size() > 0) {
             renderUpdateResultView().printUpdateSuccessView();
@@ -70,22 +94,12 @@ public class ServerController {
         }
     }
 
-    public String renderMainView(int appState, HashMap<String, ArrayList<ArrayList<Food>>> menuHashMap) {
-        if (appState == 1) {
-            return renderItemView(menuHashMap);
-        }
-        else if (appState == 2) {
-            // render Menu view
-        }
-        return null;
-    }
-
     public void renderErrorView() {
         errorView.printErrorView();
     }
 
-    private String renderItemView(HashMap<String, ArrayList<ArrayList<Food>>> menuHashMap) {
-        return itemView.printItemView(menuHashMap);
+    public String renderItemView(int appState, HashMap<String, ArrayList<ArrayList<Food>>> menuHashMap) {
+        return itemView.printItemView(appState, menuHashMap);
     }
 
     public void renderMenuView(HashMap<String, ArrayList<ArrayList<Food>>> foodHashMap) {
@@ -95,4 +109,6 @@ public class ServerController {
     private UpdateResultView renderUpdateResultView() {
         return updateResultView;
     }
+
+    private OrderResultView renderOrderResultView() { return orderResultView; }
 }

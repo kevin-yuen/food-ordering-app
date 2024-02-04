@@ -27,6 +27,7 @@ public class Main {
 
         while (true) {
             String viewRendered = null;
+            ArrayList<String> itemList = new ArrayList<>();
 
             // 1. System asks admin to enter the operation
             while (appState == 0) {
@@ -47,7 +48,8 @@ public class Main {
 
                 if (appState != 0) {
                     Global.setMenuHashMap(serverController.notifyMenuModelToGetsFromDB());
-                    viewRendered = serverController.renderMainView(appState, Global.getMenuHashMap());
+                    viewRendered = serverController.renderItemView(appState, Global.getMenuHashMap());
+                    itemList = new ArrayList<>(Global.getMenuHashMap().keySet());
 
                     System.out.println("CURRENT MENU HASH MAP: " + Global.getMenuHashMap());
                 }
@@ -58,35 +60,17 @@ public class Main {
 
             // update menu operation
             if (appState == 1) {
-                ArrayList<String> itemList = new ArrayList<>(Global.getMenuHashMap().keySet());
-                int itemCde = 0;
+                //ArrayList<String> itemList = new ArrayList<>(Global.getMenuHashMap().keySet());
+                int updateOpItemCde = 0;
 
                 // 2: System asks user to enter the item type to perform operation on
-                while (itemCde == 0) {
+                while (updateOpItemCde == 0) {
                     System.out.print(viewRendered);
                     General.setRequestedSysOpt();
-                    String itemSelected = General.getRequestedSysOpt();
+                    updateOpItemCde = General.verifyItemSelection(General.getRequestedSysOpt());
 
-                    try {
-                        int tempItemCde = Integer.parseInt(itemSelected);
-                        itemCde = tempItemCde >= 1 && tempItemCde <= 8 ? tempItemCde : 0;
-                    }
-                    catch (NumberFormatException e) {
-                        itemCde = switch (itemSelected.toLowerCase()) {
-                            case "f" -> 1;
-                            case "b" -> 2;
-                            case "d" -> 3;
-                            case "dr" -> 4;
-                            case "m" -> 5;
-                            case "s" -> 6;
-                            case "t" -> 7;
-                            case "ba" -> 8;
-                            default -> 0;
-                        };
-                    }
-
-                    if (itemCde >= 1 && itemCde <= 7) {
-                        String itemName = itemList.get(itemCde - 1);
+                    if (updateOpItemCde >= 1 && updateOpItemCde <= 7) {
+                        String itemName = itemList.get(updateOpItemCde - 1);
                         int operationCdeOnItem = 0;
 
                         // 3. System asks user to enter the operation for the selected item type
@@ -175,39 +159,126 @@ public class Main {
                         }
 
                         if (operationCdeOnItem == 5) {
-                            itemCde = 0;
+                            updateOpItemCde = 0;
                             continue;
                         }
                     }
-                    else if (itemCde == 0) {
+                    else if (updateOpItemCde == 0) {
                         serverController.renderErrorView();
                     }
                 }
 
-                if (itemCde == 8) {
+                if (updateOpItemCde == 8) {
                     appState = 0;   // reset state of the app to default state
                     continue;
                 }
             }
             // take order operation
             else if (appState == 2) {
+                int takeOrderOpItemCde = 0;
+                boolean shouldContOrder = true;
+                ArrayList<HashMap<String, Integer>> foodsOrdered = new ArrayList<>();
+                HashMap<String, Integer> foodOrdered = new HashMap<>();
+
+                Scanner scanner = new Scanner(System.in);
+
                 String adminName = admin.getName();
                 String customerName = customer.getName();
 
-                System.out.printf("\u001B[1m%s\u001B[0m: Welcome to Five Guys, what would you like to have?\n", adminName);
+                System.out.printf("\u001B[1m%s\u001B[0m: Welcome to Five Guys!\n", adminName);
                 customer.viewMenu(Global.getMenuHashMap(), serverController);
+                // foodOrdered variable
+                // [{foodName=quantity},....]
 
-                while (true) {
-                    ArrayList<HashMap<String, Integer>> foodsOrdered = new ArrayList<>();
-                    HashMap<String, Integer> foodOrdered = new HashMap<>();
+                // Ask customer to enter a food item from "Fries", "Burgers", "Dogs", "Drinks", "Milkshake Mix-ins", or "Sandwiches"
+                    // IF he enters a topping item
+                        // THEN ask customer again to enter a food item from "Fries", "Burgers", "Dogs", "Drinks", "Milkshake Mix-ins", or "Sandwiches"
+                    // ELSE IF he enters a food item from "Burgers", "Dogs", or "Sandwiches"
+                        // THEN ask customer if he wants any topping item
+                            // IF yes, ask customer to enter a topping item
+                                // THEN ask customer if he wants any more topping item
+                                    // IF yes, ask customer again to enter a topping item
+                                    // IF no, ask customer to enter a food item from "Fries", "Burgers", "Dogs", "Drinks", "Milkshake Mix-ins", or "Sandwiches"
+                            // IF no, ask customer to enter a food item from "Fries", "Burgers", "Dogs", "Drinks", "Milkshake Mix-ins", or "Sandwiches"
+                    // ELSE IF he enters a food item from "Fries", "Drinks", or "Milkshake Mix-ins"
+                        // THEN ask customer to enter quantity
 
-                    // foodOrdered
-                    // [{foodName=quantity},....]
+                while (shouldContOrder) {
+                    String tempContOrder;
+                    String takeOrderOpItemName = "";
 
-                    break;
+                    while (takeOrderOpItemCde == 0) {
+                        System.out.printf("\u001B[1m%s\u001B[0m: %s", adminName, viewRendered);
+                        General.setRequestedSysOpt();
+                        takeOrderOpItemCde = General.verifyItemSelection(General.getRequestedSysOpt());
+
+                        if (takeOrderOpItemCde >= 1 && takeOrderOpItemCde <= 6) {
+                            takeOrderOpItemName = itemList.get(takeOrderOpItemCde - 1);
+                        }
+                        else if (takeOrderOpItemCde == 0) {
+                            serverController.renderErrorView();
+                        }
+                    }
+
+                    String foodNameRequest = customer.requestUserFood();
+                    // fries, drinks, milkshake
+                    // ask for quantity
+                    if (takeOrderOpItemCde == 1 || takeOrderOpItemCde == 4 || takeOrderOpItemCde == 5) {
+                        HashMap<String, Food> tempFoodToSyncWithGlobal = customer.addNonBreadItemToCart(serverController, takeOrderOpItemName, foodNameRequest);
+
+                        String foodKeyToAppendForSyncWithGlobal = "";
+                        ArrayList<Food> foodToAppendForSyncWithGlobal = new ArrayList<>();
+                        HashMap<String, ArrayList<Food>> foodToSyncWithGlobal = new HashMap<>();
+
+                        if (tempFoodToSyncWithGlobal.size() >= 1) {
+                            for (var entrySet: tempFoodToSyncWithGlobal.entrySet()) {
+                                foodKeyToAppendForSyncWithGlobal = entrySet.getKey();
+                                foodToAppendForSyncWithGlobal.add(entrySet.getValue());
+                            }
+                            foodToSyncWithGlobal.put(foodKeyToAppendForSyncWithGlobal, foodToAppendForSyncWithGlobal);
+                            Global.syncMenuHashMap(foodToSyncWithGlobal);
+                        }
+                    }
+                    // burgers, dogs, sandwiches
+                    else if (takeOrderOpItemCde == 2 || takeOrderOpItemCde == 3 || takeOrderOpItemCde == 6) {
+                        // ask for toppings
+                    }
+                    else if (takeOrderOpItemCde == 7) {
+
+                    }
+                    else if (takeOrderOpItemCde == 0) {
+                        serverController.renderErrorView();
+                        continue;
+                    }
+
+                    do {
+                        System.out.println("Do you want to order anything else? (\u001B[1my\u001B[0m/\u001B[1mn\u001B[0m)");
+                        tempContOrder = scanner.nextLine().trim();
+
+                        if (tempContOrder.length() == 1) {
+                            Character contOrder = tempContOrder.charAt(0);
+
+                            if (contOrder.equals('y')) {
+                                takeOrderOpItemCde = 0;     // redirect back to the item selection view
+                                break;
+                            }
+                            else if (contOrder.equals('n')) {
+                                shouldContOrder = false;
+                                break;
+                            }
+                            else {
+                                System.out.println("Invalid input. Please enter '\u001B[1my\u001B[0m/' or '\u001B[1mn\u001B[0m/'.");
+                                tempContOrder = "";
+                            }
+                        }
+                        else {
+                            System.out.println("Please enter '\u001B[1my\u001B[0m/' or '\u001B[1mn\u001B[0m/'.");
+                            tempContOrder = "";
+                        }
+                    } while(tempContOrder == "");
                 }
+                System.out.println("exiting the program...");
             }
-
             break;
         }
     }

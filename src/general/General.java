@@ -48,6 +48,29 @@ public class General {
         return String.format("%s:%s", foodName, quantity);
     }
 
+    public static int verifyItemSelection(String itemSelected) {
+        int itemCde;
+
+        try {
+            int tempItemCde = Integer.parseInt(itemSelected);
+            itemCde = tempItemCde >= 1 && tempItemCde <= 8 ? tempItemCde : 0;
+        }
+        catch (NumberFormatException e) {
+            itemCde = switch (itemSelected.toLowerCase()) {
+                case "f" -> 1;
+                case "b" -> 2;
+                case "d" -> 3;
+                case "dr" -> 4;
+                case "m" -> 5;
+                case "s" -> 6;
+                case "t" -> 7;
+                case "ba" -> 8;
+                default -> 0;
+            };
+        }
+        return itemCde;
+    }
+
     public static void setRequestedSysOpt() {
         Scanner scanner = new Scanner(System.in);
         requestedSysOpt = scanner.nextLine();
