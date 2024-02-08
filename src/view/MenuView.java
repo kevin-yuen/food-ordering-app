@@ -5,32 +5,34 @@ import general.General;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MenuView {
     public MenuView() {}
 
-    public void printMenuView(HashMap<String, ArrayList<ArrayList<Food>>> foodHashMap) {
+    public void printMenuView(Map<String, HashMap<String, List<Food>>> foodHashMap) {
         String border = "-".repeat(101), menu = border.concat("\n"), tmpMenu = "";
         String menuEntryStarterFormat = "|".concat(" ".repeat(3));
 
-        for (Map.Entry<String, ArrayList<ArrayList<Food>>> entry: foodHashMap.entrySet()) {
-            for (var element: entry.getValue()) {
+        for (Map.Entry<String, HashMap<String, List<Food>>> entry: foodHashMap.entrySet()) {
+            for (Map.Entry<String, List<Food>> e: entry.getValue().entrySet()) {
                 String menuEntry;
+                Food foodDets = e.getValue().get(0);
 
-                String foodType = General.calculateExtraSpaceToAdd(
-                        String.valueOf(entry.getKey()), 20, 25);
-                String foodName = General.calculateExtraSpaceToAdd(
-                        element.get(0).getFoodName(), 30, 35);
-                String price = "$".concat(General.calculateExtraSpaceToAdd(
-                        String.format("%.2f", element.get(0).getPrice()), 8, 10));
+                String itemName = General.calculateExtraSpaceToAdd(
+                            String.valueOf(entry.getKey()), 20, 25),
+                        foodName = General.calculateExtraSpaceToAdd(
+                            e.getKey(), 30, 35),
+                        price = "$".concat(General.calculateExtraSpaceToAdd(
+                            String.format("%.2f", foodDets.getPrice()), 8, 10));
 
-                int remainQty = element.get(0).getRemainQty(), maxQty = element.get(0).getMaxQty();
+                int remainQty = foodDets.getRemainQty(), maxQty = foodDets.getMaxQty();
                 String qty = String.valueOf(remainQty).concat(" / ").concat(String.valueOf(maxQty));
                 qty = General.calculateExtraSpaceToAdd(qty, 10, 13);
 
                 menuEntry = menuEntryStarterFormat
-                        .concat(foodType)
+                        .concat(itemName)
                         .concat("|   ".concat(foodName))
                         .concat(menuEntryStarterFormat).concat(price)
                         .concat("|   ".concat(qty.concat("|")))

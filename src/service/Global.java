@@ -1,12 +1,13 @@
 package service;
 
 import component.Food;
+import general.General;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.sql.Array;
+import java.util.*;
 
 public class Global {
-    private static HashMap<String, ArrayList<ArrayList<Food>>> menuHashMap = new HashMap<>();
+    private static Map<String, HashMap<String, List<Food>>> menuHashMap = new HashMap<>();
 
     public Global() {};
 
@@ -17,32 +18,37 @@ public class Global {
     //
     // @param dbResponse = the most updated details of the food retrieved from DB
     //
-    public static void syncMenuHashMap(HashMap<String, ArrayList<Food>> dbResponse) {
-        String itemName = dbResponse.keySet().iterator().next().toString();
-        Food newFoodDetail = dbResponse.get(itemName).get(0);
+    public static void syncMenuHashMap(HashMap<String, Food> dbResponse) {
+        String itemName = dbResponse.keySet().iterator().next().toString(),
+                foodName = dbResponse.get(itemName).getFoodName();
+        double price = dbResponse.get(itemName).getPrice();
+        int remainQty = dbResponse.get(itemName).getRemainQty(), maxQty = dbResponse.get(itemName).getMaxQty();
+
+        List<Food> newFoodDets = new ArrayList<>() {
+            {add(new Food(price, remainQty, maxQty));}
+        };
 
         if (menuHashMap.containsKey(itemName)) {
-            ArrayList<ArrayList<Food>> currentFoods = menuHashMap.get(itemName);
+            HashMap<String, List<Food>> foodsMenuHashMap = menuHashMap.get(itemName);
             boolean isFoodExist = false;
 
-            for (var currentFoodDetail: currentFoods) {
-                String foodName = currentFoodDetail.get(0).getFoodName();
-
-                if (foodName.equalsIgnoreCase(newFoodDetail.getFoodName())) {
+            for (Map.Entry<String, List<Food>> e: foodsMenuHashMap.entrySet() ) {
+                String menuHashMapFoodName = e.getKey();
+                if (menuHashMapFoodName.equalsIgnoreCase(foodName)) {
                     isFoodExist = true;
-                    currentFoodDetail.set(0, newFoodDetail);
+                    e.setValue(newFoodDets);
                 }
             }
 
-            if (!isFoodExist) currentFoods.add(dbResponse.get(itemName));
+            if (!isFoodExist) foodsMenuHashMap.put(foodName, newFoodDets);
         }
     }
 
-    public static void setMenuHashMap(HashMap<String, ArrayList<ArrayList<Food>>> latestMenuItems) {
+    public static void setMenuHashMap(Map<String, HashMap<String, List<Food>>> latestMenuItems) {
         menuHashMap = latestMenuItems;
     }
 
-    public static HashMap<String, ArrayList<ArrayList<Food>>> getMenuHashMap() {
+    public static Map<String, HashMap<String, List<Food>>> getMenuHashMap() {
         return menuHashMap;
     }
 }

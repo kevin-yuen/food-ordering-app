@@ -2,6 +2,9 @@ package general;
 
 // This class contains general methods that are used by other classes.
 
+import component.Food;
+
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Optional;
 
@@ -38,14 +41,6 @@ public class General {
             refomattedValue = value.concat(" ".repeat(totalLen - value.length()));
         }
         return refomattedValue;
-    }
-
-    public static String createKeyValueForPriceUpdate(String foodName, double price) {
-        return String.format("%s:%s", foodName, price);
-    }
-
-    public static String createKeyValueForQuantityUpdate(String foodName, int quantity) {
-        return String.format("%s:%s", foodName, quantity);
     }
 
     public static int verifyItemSelection(String itemSelected) {

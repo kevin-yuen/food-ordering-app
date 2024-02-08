@@ -15,7 +15,6 @@ public class Main {
         int appState = 0;   // 1 = update menu; 2 = take order
 
         Database db = new Database();
-        db.createDBConnection();
 
         Admin admin = new Admin("Store Manager");
         Customer customer = new Customer("Customer");
@@ -26,14 +25,15 @@ public class Main {
         General.drawBoard();
 
         while (true) {
-            String viewRendered = null;
+            String viewRendered = "";
             ArrayList<String> itemList = new ArrayList<>();
 
             // 1. System asks admin to enter the operation
             while (appState == 0) {
                 System.out.println("Enter the operation you want to perform:" +
                         "\n1. [\u001B[1mU\u001B[0m]pdate menu" +
-                        "\n2. [\u001B[1mT\u001B[0m]ake order");
+                        "\n2. [\u001B[1mT\u001B[0m]ake order" +
+                        "\n3. [\u001B[1mV\u001B[0m]iew cart");
                 General.setRequestedSysOpt();
                 String operation = General.getRequestedSysOpt();
 
@@ -47,11 +47,17 @@ public class Main {
                 }
 
                 if (appState != 0) {
-                    Global.setMenuHashMap(serverController.notifyMenuModelToGetsFromDB());
+                    Map<String, HashMap<String, List<Food>>> latestMenuItemsFromDB =
+                            serverController.notifyMenuModelToGetsFromDB();
+
+                    if (latestMenuItemsFromDB.size() >= 1) {
+                        Global.setMenuHashMap(latestMenuItemsFromDB);
+                    }
+                    else {
+                        serverController.renderServerErrorView();
+                    }
                     viewRendered = serverController.renderItemView(appState, Global.getMenuHashMap());
                     itemList = new ArrayList<>(Global.getMenuHashMap().keySet());
-
-                    System.out.println("CURRENT MENU HASH MAP: " + Global.getMenuHashMap());
                 }
                 else {
                     serverController.renderErrorView();
@@ -60,7 +66,6 @@ public class Main {
 
             // update menu operation
             if (appState == 1) {
-                //ArrayList<String> itemList = new ArrayList<>(Global.getMenuHashMap().keySet());
                 int updateOpItemCde = 0;
 
                 // 2: System asks user to enter the item type to perform operation on
@@ -100,12 +105,11 @@ public class Main {
                             }
 
                             if (operationCdeOnItem == 1) {
-                                String priceUpdateRequest = admin.updateFoodPrice();
-                                String foodName = priceUpdateRequest.substring(0, priceUpdateRequest.indexOf(':'));
-                                double foodPrice = Double.parseDouble(priceUpdateRequest.substring(
-                                        priceUpdateRequest.indexOf(':')+1));
+                                HashMap<String, Double> foodNameAndPrice = admin.updateFoodPrice();
+                                String foodName = foodNameAndPrice.keySet().toArray()[0].toString();
+                                double foodPrice = foodNameAndPrice.get(foodName);
 
-                                HashMap<String, ArrayList<Food>> dbResponse =
+                                HashMap<String, Food> dbResponse =
                                         serverController.notifyMenuModelToUpdatePrice(itemName, foodName, foodPrice);
 
                                 if (dbResponse.size() > 0) {
@@ -121,7 +125,7 @@ public class Main {
                                 double price = Double.parseDouble(foodDetailsObject.get(1).toString());
                                 int maxQty = Integer.parseInt(foodDetailsObject.get(2).toString());
 
-                                HashMap<String, ArrayList<Food>> dbResponse = serverController
+                                HashMap<String, Food> dbResponse = serverController
                                         .notifyMenuModelToCreateFood(itemName, foodName, price, maxQty);
 
                                 if (dbResponse.size() > 0) {
@@ -130,12 +134,11 @@ public class Main {
                                 operationCdeOnItem = 0;     // reset to perform other operations on the selected item
                             }
                             else if (operationCdeOnItem == 3) {
-                                String maxQtyUpdateRequest = admin.updateFoodMaxQty();
-                                String reqFoodName = maxQtyUpdateRequest.substring(0, maxQtyUpdateRequest.indexOf(':'));
-                                int reqMaxQty = Integer.parseInt(maxQtyUpdateRequest.substring(
-                                        maxQtyUpdateRequest.indexOf(':')+1));
+                                HashMap<String, Integer> foodNameAndMaxQty = admin.updateFoodMaxQty();
+                                String reqFoodName = foodNameAndMaxQty.keySet().toArray()[0].toString();
+                                int reqMaxQty = foodNameAndMaxQty.get(reqFoodName);
 
-                                HashMap<String, ArrayList<Food>> dbResponse = serverController
+                                HashMap<String, Food> dbResponse = serverController
                                         .notifyMenuModelToUpdateMaxQty(itemName, reqFoodName, reqMaxQty);
 
                                 if (dbResponse.size() > 0) {
@@ -177,8 +180,9 @@ public class Main {
             else if (appState == 2) {
                 int takeOrderOpItemCde = 0;
                 boolean shouldContOrder = true;
-                ArrayList<HashMap<String, Integer>> foodsOrdered = new ArrayList<>();
-                HashMap<String, Integer> foodOrdered = new HashMap<>();
+//                ArrayList<HashMap<String, Integer>> cart = new ArrayList<>();
+//                HashMap<String, Integer> tempCart;
+                HashMap<String, Integer> cart = new HashMap<>();
 
                 Scanner scanner = new Scanner(System.in);
 
@@ -215,37 +219,53 @@ public class Main {
                         if (takeOrderOpItemCde >= 1 && takeOrderOpItemCde <= 6) {
                             takeOrderOpItemName = itemList.get(takeOrderOpItemCde - 1);
                         }
+                        else if (takeOrderOpItemCde == 7 || takeOrderOpItemCde == 8) {
+                            appState = 0;
+                        }
                         else if (takeOrderOpItemCde == 0) {
                             serverController.renderErrorView();
                         }
                     }
 
+                    if (appState == 0) {
+                        shouldContOrder = false;
+                        break;
+                    }
+
                     String foodNameRequest = customer.requestUserFood();
-                    // fries, drinks, milkshake
-                    // ask for quantity
+
+                    // {Food A=2, Food B=5}
+
                     if (takeOrderOpItemCde == 1 || takeOrderOpItemCde == 4 || takeOrderOpItemCde == 5) {
-                        HashMap<String, Food> tempFoodToSyncWithGlobal = customer.addNonBreadItemToCart(serverController, takeOrderOpItemName, foodNameRequest);
+                        HashMap<String, Food> foodToSyncWithGlobal = customer.addNonBreadItemToCart(serverController, takeOrderOpItemName, foodNameRequest);
 
-                        String foodKeyToAppendForSyncWithGlobal = "";
-                        ArrayList<Food> foodToAppendForSyncWithGlobal = new ArrayList<>();
-                        HashMap<String, ArrayList<Food>> foodToSyncWithGlobal = new HashMap<>();
+                        if (foodToSyncWithGlobal.size() >= 1) {
 
-                        if (tempFoodToSyncWithGlobal.size() >= 1) {
-                            for (var entrySet: tempFoodToSyncWithGlobal.entrySet()) {
-                                foodKeyToAppendForSyncWithGlobal = entrySet.getKey();
-                                foodToAppendForSyncWithGlobal.add(entrySet.getValue());
-                            }
-                            foodToSyncWithGlobal.put(foodKeyToAppendForSyncWithGlobal, foodToAppendForSyncWithGlobal);
-                            Global.syncMenuHashMap(foodToSyncWithGlobal);
+//                            String itemName = foodToSyncWithGlobal.keySet().toArray()[0].toString(),
+//                                    foodName = foodToSyncWithGlobal.get(itemName).getFoodName();
+//                            int custReqQuantity = customer.getReqQuantity();
+//                            tempCart = new HashMap<>();
+//
+//                            tempCart.put(foodName, custReqQuantity);
+//
+//                            for (Map.Entry foodItem: cart.entrySet()) {
+//                                if (foodItem.getKey() == foodName) {
+//                                    int currentQuantity = Integer.parseInt((String) foodItem.getValue());
+//                                    foodItem.setValue(currentQuantity + 1);
+//                                }
+//                            }
+//                            foodsOrdered.add(foodOrderedHashMap);
+//                            Global.syncMenuHashMap(foodToSyncWithGlobal);
+//                            System.out.println("Temp cart: " + foodsOrdered);
                         }
                     }
                     // burgers, dogs, sandwiches
                     else if (takeOrderOpItemCde == 2 || takeOrderOpItemCde == 3 || takeOrderOpItemCde == 6) {
                         // ask for toppings
                     }
-                    else if (takeOrderOpItemCde == 7) {
-
-                    }
+//                    else if (takeOrderOpItemCde == 7) {
+//                        appState = 0;
+//                    }
                     else if (takeOrderOpItemCde == 0) {
                         serverController.renderErrorView();
                         continue;
@@ -277,9 +297,8 @@ public class Main {
                         }
                     } while(tempContOrder == "");
                 }
-                System.out.println("exiting the program...");
+                //if (!shouldContOrder) continue;
             }
-            break;
         }
     }
 }

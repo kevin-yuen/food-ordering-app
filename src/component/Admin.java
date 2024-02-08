@@ -2,6 +2,7 @@ package component;
 
 import general.General;
 
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class Admin extends Person {
@@ -11,28 +12,14 @@ public class Admin extends Person {
         super(name);
     }
 
-//    private String initiateChangeItemOperation() {
-//        String foodName;
-//
-//        while (true) {
-//            System.out.print("Enter food name: ");
-//            foodName = scanner.nextLine().trim();
-//
-//            if (foodName.equalsIgnoreCase("")) {
-//                System.out.println("Please enter food name.");
-//                continue;
-//            }
-//            break;
-//        }
-//
-//        return foodName;
-//    }
-
-    public String updateFoodPrice() {
+    public HashMap<String, Double> updateFoodPrice() {
         String foodName = requestUserFood();
         double foodPrice = getRequestedPrice();
+        HashMap<String, Double> foodNameAndPrice = new HashMap<>() {
+            {put(foodName, foodPrice);}
+        };
 
-        return General.createKeyValueForPriceUpdate(foodName, foodPrice);
+        return foodNameAndPrice;
     }
 
     public Object[] addFood() {
@@ -44,11 +31,14 @@ public class Admin extends Person {
         return foodDetails;
     }
 
-    public String updateFoodMaxQty() {
+    public HashMap<String, Integer> updateFoodMaxQty() {
         String foodName = requestUserFood();
         int foodMaxQty = getRequestedMaxQty();
+        HashMap<String, Integer> foodNameAndMaxQty = new HashMap<>() {
+            {put(foodName, foodMaxQty);}
+        };
 
-        return General.createKeyValueForQuantityUpdate(foodName, foodMaxQty);
+        return foodNameAndMaxQty;
     }
 
     private double getRequestedPrice() {

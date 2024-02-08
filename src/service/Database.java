@@ -1,10 +1,10 @@
 package service;
 
 import component.Food;
+import general.General;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,214 +28,172 @@ public class Database {
         }
     }
 
-    public ArrayList<ArrayList<String>> queryLatestItemDetails(String sql, String... column) {
-        ArrayList<ArrayList<String>> itemList = new ArrayList<>();
-        ArrayList<String> item;
+    public Map<String, HashMap<String, List<Food>>> queryLatestMenuItemsDets(String sql, String... column) {
+        Map<String, HashMap<String, List<Food>>> menuItems = new HashMap<>();
+        HashMap<String, List<Food>> foodNameAndDets = new HashMap<>();
+        List<Food> foodDets;
+
+        String itemName = null, foodName= null;
+        double price = 0.0d;
+        int remainQty = 0, maxQty = 0;
+
         createDBConnection();
 
         try {
             this.statement = this.con.createStatement();
-            ResultSet rs = this.statement.executeQuery(sql);
+            ResultSet resultSet = this.statement.executeQuery(sql);
+            ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
+            String itemNameChked = "";
 
-            while (rs.next()) {
-                item = new ArrayList<>();
+            while (resultSet.next()) {
+                foodDets = new ArrayList<>();
+
                 for (var col: column) {
-                    String value = rs.getString(col);
-                    item.add(value);
+                    if (resultSetMetaData.getColumnLabel(1).equalsIgnoreCase(col)) {
+                        itemName = resultSet.getString(col);
+
+                        if (!itemNameChked.equalsIgnoreCase(itemName)) {
+                            itemNameChked = itemName;
+                            foodNameAndDets = new HashMap<>();
+                        }
+                    }
+                    else if (resultSetMetaData.getColumnLabel(2).equalsIgnoreCase(col)) {
+                        foodName = resultSet.getString(col);
+                    }
+                    else if (resultSetMetaData.getColumnLabel(3).equalsIgnoreCase(col)) {
+                        price = Double.parseDouble(resultSet.getString(col));
+                    }
+                    else if (resultSetMetaData.getColumnLabel(4).equalsIgnoreCase(col)) {
+                        remainQty = Integer.parseInt(resultSet.getString(col));
+                    }
+                    else if (resultSetMetaData.getColumnLabel(5).equalsIgnoreCase(col)) {
+                        maxQty = Integer.parseInt(resultSet.getString(col));
+                    }
                 }
-
-                itemList.add(item);
+                foodDets.add(new Food(price, remainQty, maxQty));
+                foodNameAndDets.putIfAbsent(foodName, foodDets);
+                menuItems.putIfAbsent(itemName, foodNameAndDets);
             }
         }
         catch (SQLException e) {
             Logger.getLogger(Database.class.getName()).log(Level.SEVERE, e.getMessage(), e);
         }
-
-        return itemList;
+        return menuItems;
     }
 
-    public ArrayList<Food> updateFoodDetail(String sql, String arg, String name, String price, String remainQty,
-                                                    String maxQty) {
-        ArrayList<Food> updatedFood = new ArrayList<>();
-        createDBConnection();
-
-        try {
-            this.preparedStatement = this.con.prepareStatement(sql);
-            int rowCountUpdated = this.preparedStatement.executeUpdate();
-
-            if (rowCountUpdated >= 1) {
-                String query = String.format("SELECT name, %s, %s, %s FROM food WHERE name = '%s'", price,
-                        remainQty, maxQty, arg);
-                updatedFood = retrieveLatestFoodDetails(query, name, price, remainQty, maxQty);
-            }
-
-            this.con.close();
-        }
-        catch (SQLException e) {
-            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, e.getMessage(), e);
-        }
-
-        return updatedFood;
-    }
-
-    public ArrayList<Food> createNewFood(String sql, String newFoodName, String name, String price, String remainQty,
-                                         String maxQty) {
-        ArrayList<Food> newFood = new ArrayList<>();
-        String queryToCheckExistings = String.format("SELECT * FROM food WHERE name = '%s'", newFoodName);
-        createDBConnection();
+    public Food createNewFood(String sql, String newFoodName) {
+        Food newFood = new Food();
+        String query = String.format("SELECT name AS foodName, " +
+                "price, " +
+                "remainQty, " +
+                "maxQty\n" +
+                "FROM foodorder.food\n" +
+                "WHERE name = '%s';", newFoodName);
 
         try {
             // check if the new food already exists
-            this.statement = this.con.createStatement();
-            ResultSet rs = this.statement.executeQuery(queryToCheckExistings);
+            Food foodRSet = this.executeReadOp(query, "foodName", "price", "remainQty", "maxQty");
+            if (foodRSet.getFoodName() != null) {
+                this.executeManipulateOp(sql);
 
-            if (!rs.next()) {
-                this.preparedStatement = this.con.prepareStatement(sql);
-                this.preparedStatement.executeUpdate();
+                String queryGetNewFood = String.format("SELECT i.name AS itemName,\n" +
+                        "f.name AS foodName,\n" +
+                        "f.price,\n" +
+                        "f.remainQty,\n" +
+                        "f.maxQty\n" +
+                        "FROM foodorder.food f\n" +
+                        "INNER JOIN foodorder.item i\n" +
+                        "WHERE f.itemId = i.itemId\n" +
+                        "ORDER BY foodId DESC\n" +
+                        "LIMIT 1;");
 
-                String queryToGetTheNewFood = String.format("SELECT name, %s, %s, %s FROM foodorder.food " +
-                                "ORDER BY foodID " +
-                                "DESC LIMIT 1;", price, remainQty, maxQty);
-                newFood = retrieveLatestFoodDetails(queryToGetTheNewFood, name, price, remainQty, maxQty);
+                newFood = this.executeReadOp(queryGetNewFood, "itemName", "foodName", "price", "remainQty", "maxQty");
             }
-
             this.con.close();
         }
         catch (SQLException e) {
             Logger.getLogger(Database.class.getName()).log(Level.SEVERE, e.getMessage(), e);
         }
-
-        System.out.println("NEW FOOD: " + newFood);
         return newFood;
     }
 
-    private ArrayList<Food> retrieveLatestFoodDetails(String sql, String name, String price, String remainQty,
-                                                   String maxQty) {
-        ArrayList<Food> updatedFood = new ArrayList<>();
+    public HashMap<String, Food> updateFoodDets(String sql, String foodName) {
+        HashMap<String, Food> latestFoodDets = new HashMap<>();
+        int rowCountUpdated = executeManipulateOp(sql);
+
+        if (rowCountUpdated >= 1) {
+            String query = String.format("SELECT i.name AS itemName, " +
+                    "f.name AS foodName, " +
+                    "f.price, " +
+                    "f.remainQty, " +
+                    "f.maxQty\n" +
+                    "FROM foodorder.food f\n" +
+                    "INNER JOIN foodorder.item i\n" +
+                    "ON f.itemId = i.itemId\n" +
+                    "WHERE f.name = '%s';", foodName);
+
+            Food foodRSet = this.executeReadOp(query, "itemName", "foodName", "price", "remainQty", "maxQty");
+            Food foodDets = new Food(foodRSet.getFoodName(), foodRSet.getPrice(), foodRSet.getRemainQty(),
+                    foodRSet.getMaxQty());
+            latestFoodDets.put(foodRSet.getItemName(), foodDets);
+        }
+        return latestFoodDets;
+    }
+
+    public Food executeReadOp(String sql, String... columns) {
+        Food food = new Food();
         createDBConnection();
 
         try {
+            String itemName = "", foodName = "";
+            double price = 0.0d;
+            int remainQty = 0, maxQty = 0;
+            ResultSet resultSet;
+
             this.statement = this.con.createStatement();
-            ResultSet rs = this.statement.executeQuery(sql);
+            resultSet = this.statement.executeQuery(sql);
+            ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
 
-            while (rs.next()) {
-                String foodName = rs.getString(name);
-                double parsedPrice = Double.parseDouble(rs.getString(price));
-                int parsedRemainQty = Integer.parseInt(rs.getString(remainQty)),
-                        parsedMaxQty = Integer.parseInt(rs.getString(maxQty));
-
-                Food updatedFoodDetail = new Food(foodName, parsedPrice, parsedRemainQty, parsedMaxQty);
-                updatedFood.add(updatedFoodDetail);
+            while (resultSet.next()) {
+                for (var col: columns) {
+                    if (resultSetMetaData.getColumnLabel(1).equalsIgnoreCase(col)) {
+                        itemName = resultSet.getString(col);
+                    }
+                    else if (resultSetMetaData.getColumnLabel(2).equalsIgnoreCase(col)) {
+                        foodName = resultSet.getString(col);
+                    }
+                    else if (resultSetMetaData.getColumnLabel(3).equalsIgnoreCase(col)) {
+                        price = Double.parseDouble(resultSet.getString(col));
+                    }
+                    else if (resultSetMetaData.getColumnLabel(4).equalsIgnoreCase(col)) {
+                        remainQty = Integer.parseInt(resultSet.getString(col));
+                    }
+                    else if (resultSetMetaData.getColumnLabel(5).equalsIgnoreCase(col)) {
+                        maxQty = Integer.parseInt(resultSet.getString(col));
+                    }
+                }
             }
+            food = !itemName.equals("") ? new Food(itemName, foodName, price, remainQty, maxQty) :
+                    new Food(foodName, price, remainQty, maxQty);
         }
         catch (SQLException e) {
             Logger.getLogger(Database.class.getName()).log(Level.SEVERE, e.getMessage(), e);
         }
-
-        return updatedFood;
+        return food;
     }
 
-    // Retrieve the latest max. quantity of the food
-    //
-    // This function retrieves the latest max. quantity of the food to re-calculate remainQty
-    public HashMap<String, ArrayList<String>> retrieveCurrentQty(String sql, String columnFoodName,
-                                                                 String columnRemainQty, String columnMaxQty) {
-        ArrayList<String> quantities = new ArrayList<>();
-        HashMap<String, ArrayList<String>> foodWithQuantities = new HashMap<>();
-        createDBConnection();
-
-        try {
-            this.statement = this.con.createStatement();
-            ResultSet rs = this.statement.executeQuery(sql);
-
-            while (rs.next()) {
-                quantities.add(rs.getString(columnRemainQty));
-                quantities.add(rs.getString(columnMaxQty));
-
-                foodWithQuantities.put(rs.getString(columnFoodName), quantities);
-            }
-        }
-        catch (SQLException e) {
-            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, e.getMessage(), e);
-        }
-        return foodWithQuantities;
-    }
-
-    public HashMap<String, Integer> retrieveCurrentRemainQty(String sql, String columnFoodName,
-                                                            String columnRemainQtyName) {
-        HashMap<String, Integer> foodWithRemainQty = new HashMap<>();
-        createDBConnection();
-
-        try {
-            this.statement = this.con.createStatement();
-            ResultSet rs = this.statement.executeQuery(sql);
-
-            while (rs.next()) {
-                String foodName = rs.getString(columnFoodName);
-                //String foodName = rs.getString(columnFoodName).toLowerCase();
-                int remainQty = Integer.parseInt(rs.getString(columnRemainQtyName));
-
-                foodWithRemainQty.put(foodName, remainQty);
-            }
-        }
-        catch (SQLException e) {
-            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, e.getMessage(), e);
-        }
-        return foodWithRemainQty;
-    }
-
-    public HashMap<String, Food> updateFoodDetailTest(String sql, String foodName) {
-        HashMap<String, Food> latestFoodDetails = new HashMap<>();
+    private int executeManipulateOp(String sql) {
+        int rowCtn = 0;
         createDBConnection();
 
         try {
             this.preparedStatement = this.con.prepareStatement(sql);
-            int rowCountUpdated = this.preparedStatement.executeUpdate();
-
-            if (rowCountUpdated >= 1) {
-                String query = String.format("SELECT i.name as itemName, " +
-                        "f.name as foodName, " +
-                        "f.price, " +
-                        "f.remainQty, " +
-                        "f.maxQty\n" +
-                        "FROM foodorder.food f\n" +
-                        "INNER JOIN foodorder.item i\n" +
-                        "ON f.itemId = i.itemId\n" +
-                        "WHERE f.name = '%s';", foodName);
-                latestFoodDetails = retrieveLatestFoodDetailsTest(query);
-            }
-
+            rowCtn = this.preparedStatement.executeUpdate();
             this.con.close();
         }
         catch (SQLException e) {
             Logger.getLogger(Database.class.getName()).log(Level.SEVERE, e.getMessage(), e);
         }
-        return latestFoodDetails;
-    }
-
-    public HashMap<String, Food> retrieveLatestFoodDetailsTest(String sql) {
-        HashMap<String, Food> latestFoodDetails = new HashMap<>();
-        Food updatedFood;
-        createDBConnection();
-
-        try {
-            this.statement = this.con.createStatement();
-            ResultSet rs = this.statement.executeQuery(sql);
-
-            while (rs.next()) {
-                String foodName = rs.getString("foodName");
-                double parsedPrice = Double.parseDouble(rs.getString("price"));
-                int parsedRemainQty = Integer.parseInt(rs.getString("remainQty")),
-                        parsedMaxQty = Integer.parseInt(rs.getString("maxQty"));
-
-                updatedFood = new Food(foodName, parsedPrice, parsedRemainQty, parsedMaxQty);
-                latestFoodDetails.put(rs.getString("itemName"), updatedFood);
-            }
-        }
-        catch (SQLException e) {
-            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, e.getMessage(), e);
-        }
-
-        return latestFoodDetails;
+        return rowCtn;
     }
 }

@@ -7,6 +7,7 @@ import java.util.Scanner;
 
 public class Customer extends Person {
     Scanner scanner = new Scanner(System.in);
+    private int reqQuantity;
 
     public Customer(String name) {
         super(name);
@@ -20,11 +21,12 @@ public class Customer extends Person {
         // send requested item name, food name, and quantity to servercontroller
         // notifyMenuModelToUpdateRemainQty(itemName, foodName, reqQty) from servercontroller pass request to Menu Model
         // from Menu Model, call db.updateFoodDetail(String sql, String arg, String name, String price, String remainQty, String maxQty)
-        int reqQuantity = getRequestedQuantity();
+        setReqQuantity();
+        int reqQuantity = getReqQuantity();
         return serverController.notifyMenuModelToUpdateRemainQty(itemName, foodNameRequest, reqQuantity);
     }
 
-    private int getRequestedQuantity() {
+    private void setReqQuantity() {
         int orderedQuantity = 0;
 
         while (orderedQuantity <= 0) {
@@ -40,7 +42,11 @@ public class Customer extends Person {
                 System.out.println("Invalid quantity. Please try again.");
             }
         }
-        return orderedQuantity;
+        this.reqQuantity = orderedQuantity;
+    }
+
+    public int getReqQuantity() {
+        return reqQuantity;
     }
 
     public void removeItemFromCart() {
@@ -54,4 +60,8 @@ public class Customer extends Person {
     public void makePayment() {
 
     }
+
+//    private void setReqQuantity(int reqQuantity) {
+//        this.reqQuantity = reqQuantity;
+//    }
 }

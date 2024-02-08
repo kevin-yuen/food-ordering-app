@@ -2,9 +2,7 @@ package component;
 
 import controller.ServerController;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Scanner;
+import java.util.*;
 
 public class Person {
     Scanner scanner = new Scanner(System.in);
@@ -14,7 +12,7 @@ public class Person {
         this.name = name;
     }
 
-    public void viewMenu(HashMap<String, ArrayList<ArrayList<Food>>> foodHashMap, ServerController serverController) {
+    public void viewMenu(Map<String, HashMap<String, List<Food>>> foodHashMap, ServerController serverController) {
         serverController.renderMenuView(foodHashMap);
     }
 

@@ -5,14 +5,15 @@ import component.Food;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ItemView {
     public ItemView() {}
 
-    public String printItemView(int appState, HashMap<String, ArrayList<ArrayList<Food>>> menuHashMap) {
+    public String printItemView(int appState, Map<String, HashMap<String, List<Food>>> menuHashMap) {
         List<String> itemList;
-        String itemSelectMessage = "";
+        String itemSelectMessage;
         String styledItemName;
         int itemNumber = 1;
 
