@@ -3,10 +3,9 @@ package general;
 // This class contains general methods that are used by other classes.
 
 import component.Food;
+import service.Global;
 
-import java.util.ArrayList;
-import java.util.Scanner;
-import java.util.Optional;
+import java.util.*;
 
 public class General {
     private static String requestedSysOpt;
@@ -64,6 +63,29 @@ public class General {
             };
         }
         return itemCde;
+    }
+
+    public static HashMap<String, String> composeToppingNameCharMapping(List<String> toppingNames) {
+        HashMap<String, String> nameCharMapping = new HashMap<>();
+
+        for (var toppingName: toppingNames) {
+            String toppingChar = "";
+            if (toppingName.equalsIgnoreCase("Grilled Onions") || toppingName.equalsIgnoreCase("Grilled Mushrooms")) {
+                String[] tempToppingName = toppingName.split(" ");
+
+                for (var tName: tempToppingName) {
+                    toppingChar += tName.toLowerCase().substring(0, 1);
+                }
+            }
+            else if (toppingName.equalsIgnoreCase("Mustard")) {
+                toppingChar = toppingName.toLowerCase().substring(0, 2);
+            }
+            else {
+                toppingChar = toppingName.toLowerCase().substring(0, 1);
+            }
+            nameCharMapping.put(toppingName, toppingChar);
+        }
+        return nameCharMapping;
     }
 
     public static void setRequestedSysOpt() {

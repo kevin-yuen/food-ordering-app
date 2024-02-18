@@ -1,6 +1,8 @@
 package controller;
 
+import component.CartForm;
 import component.Food;
+import model.CartModel;
 import model.MenuModel;
 import view.*;
 
@@ -11,24 +13,34 @@ import java.util.Map;
 
 public class ServerController {
     private MenuModel menuModel;
+    private CartModel cartModel;
     private MenuView menuView;
     private ItemView itemView;
     private ErrorView errorView;
     private UpdateResultView updateResultView;
     private OrderResultView orderResultView;
     private ServerErrorView serverErrorView;
+    private ToppingsView toppingsView;
+    private ToppingSelectionResultView toppingSelectionResultView;
+    private CartView cartView;
+    private ShutdownView shutdownView;
 
-    public ServerController(MenuModel menuModel, MenuView menuView) {
+    public ServerController(MenuModel menuModel, CartModel cartModel) {
         this.menuModel = menuModel;
-        this.menuView = menuView;
+        this.cartModel = cartModel;
+        this.menuView = new MenuView();
         this.itemView = new ItemView();
         this.errorView = new ErrorView();
         this.updateResultView = new UpdateResultView();
         this.orderResultView = new OrderResultView();
         this.serverErrorView = new ServerErrorView();
+        this.toppingsView = new ToppingsView();
+        this.toppingSelectionResultView = new ToppingSelectionResultView();
+        this.cartView = new CartView();
+        this.shutdownView = new ShutdownView();
     }
 
-    public Map<String, HashMap<String, List<Food>>>  notifyMenuModelToGetsFromDB() {
+    public Map<String, HashMap<String, List<Food>>> notifyMenuModelToGetsFromDB() {
         return menuModel.getLatestMenuItemsFromDB();
     }
 
@@ -64,29 +76,37 @@ public class ServerController {
         return dbResponse;
     }
 
-    public HashMap<String, Food> notifyMenuModelToUpdateRemainQty(String itemName, String foodName, int reqQty) {
-        HashMap<String, Food> dbResponseUpdatedRemainQty = menuModel.sendDBRequestToUpdateRemainQty(
+    public HashMap<String, Food> notifyCartModelToUpdateRemainQty(String itemName, String foodName, int reqQty) {
+        HashMap<String, Food> dbResponseUpdatedRemainQty = cartModel.sendDBRequestToUpdateRemainQty(
                 itemName, foodName, reqQty);
-        boolean isSyncWithGlobalRequired = checkDBResponseToRenderOrderResultView(itemName, foodName, reqQty, dbResponseUpdatedRemainQty);
+        checkDBResponseToRenderOrderResultView(itemName, foodName, reqQty, dbResponseUpdatedRemainQty);
 
-        if (isSyncWithGlobalRequired) {
+        if (dbResponseUpdatedRemainQty.size() > 0) {
             return dbResponseUpdatedRemainQty;
         }
         else {
             return new HashMap<>();
         }
+//        boolean isSyncWithGlobalRequired = checkDBResponseToRenderOrderResultView(itemName, foodName, reqQty, dbResponseUpdatedRemainQty);
+//
+//        if (isSyncWithGlobalRequired) {
+//            return dbResponseUpdatedRemainQty;
+//        }
+//        else {
+//            return new HashMap<>();
+//        }
     }
 
-    private boolean checkDBResponseToRenderOrderResultView(String itemName, String foodName, int reqQty, HashMap<String, Food> dbResponse) {
-        boolean isSyncWithGlobalRequired = false;
-
-        if (dbResponse.size() > 0) {
-            isSyncWithGlobalRequired = renderOrderResultView().determineViewToShow(itemName, foodName, reqQty);
+    private void checkDBResponseToRenderOrderResultView(String itemName, String foodName, int reqQty, HashMap<String, Food> dbResponse) {
+        if (itemName != "Toppings") {
+            if (dbResponse.size() > 0) {
+                //renderOrderResultView().determineViewToShow(itemName, foodName, reqQty);
+                renderOrderResultView().printOrderSuccessView(foodName);
+            }
+            else {
+                renderOrderResultView().printInvalidFoodView();
+            }
         }
-        else {
-            renderOrderResultView().printNoFoodView();
-        }
-        return isSyncWithGlobalRequired;
     }
 
     private void checkDBResponseToRenderResultView(HashMap<String, Food> dbResponse) {
@@ -118,5 +138,21 @@ public class ServerController {
         return updateResultView;
     }
 
-    private OrderResultView renderOrderResultView() { return orderResultView; }
+    public OrderResultView renderOrderResultView() { return orderResultView; }
+
+    public String renderToppingsView() {
+        return toppingsView.printToppingsView();
+    }
+
+    public void renderToppingSelectionResultView(List<HashMap<String, Double>> toppingsOrder, List<String> invalidToppingsOrder) {
+        toppingSelectionResultView.determineToppingResultView(toppingsOrder, invalidToppingsOrder);
+    }
+
+    public void renderCartView(List<CartForm> currentCart) {
+        cartView.determineCartView(currentCart);
+    }
+
+    public void renderShutDownView() {
+        shutdownView.printShutDownView();
+    }
 }
