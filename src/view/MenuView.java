@@ -3,7 +3,6 @@ package view;
 import component.Food;
 import general.General;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,8 +14,8 @@ public class MenuView {
         String border = "-".repeat(101), menu = border.concat("\n"), tmpMenu = "";
         String menuEntryStarterFormat = "|".concat(" ".repeat(3));
 
-        for (Map.Entry<String, HashMap<String, List<Food>>> entry: foodHashMap.entrySet()) {
-            for (Map.Entry<String, List<Food>> e: entry.getValue().entrySet()) {
+        for (Map.Entry<String, HashMap<String, List<Food>>> entry : foodHashMap.entrySet()) {
+            for (Map.Entry<String, List<Food>> e : entry.getValue().entrySet()) {
                 String menuEntry;
                 Food foodDets = e.getValue().get(0);
 
@@ -43,7 +42,6 @@ public class MenuView {
         }
 
         menu += tmpMenu.concat(border);
-
         System.out.println(menu);
     }
 }

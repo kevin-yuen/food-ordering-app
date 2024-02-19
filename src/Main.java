@@ -5,10 +5,8 @@ import model.CartModel;
 import model.MenuModel;
 import service.Database;
 import service.Global;
-//import view.MenuView;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Main {
     public static void main(String[] args) {
@@ -18,7 +16,6 @@ public class Main {
 
         Admin admin = new Admin("Store Manager");
         Customer customer = new Customer("Customer");
-        //Cart cart = new Cart();
         MenuModel menuModel = new MenuModel(db);
         CartModel cartModel = new CartModel(db);
         ServerController serverController = new ServerController(menuModel, cartModel);
@@ -28,7 +25,6 @@ public class Main {
         while (true) {
             String viewRendered = "";
             ArrayList<String> itemList = new ArrayList<>();
-            //Scanner scanner = new Scanner(System.in);
 
             // 1. System asks admin to enter the operation
             while (appState == 0) {
@@ -49,21 +45,16 @@ public class Main {
                         case 4 -> 4;
                         default -> 0;
                     };
-                }
-                catch (NumberFormatException e) {
+                } catch (NumberFormatException e) {
                     if (operation.equalsIgnoreCase("u")) {
                         appState = 1;
-                    }
-                    else if (operation.equalsIgnoreCase("t")) {
+                    } else if (operation.equalsIgnoreCase("t")) {
                         appState = 2;
-                    }
-                    else if (operation.equalsIgnoreCase("v")) {
+                    } else if (operation.equalsIgnoreCase("v")) {
                         appState = 3;
-                    }
-                    else if (operation.equalsIgnoreCase("s")) {
+                    } else if (operation.equalsIgnoreCase("s")) {
                         appState = 4;
-                    }
-                    else {
+                    } else {
                         appState = 0;
                     }
                 }
@@ -75,19 +66,16 @@ public class Main {
 
                         if (latestMenuItemsFromDB.size() >= 1) {
                             Global.setMenuHashMap(latestMenuItemsFromDB);
-                        }
-                        else {
+                        } else {
                             serverController.renderServerErrorView();
                         }
                         viewRendered = serverController.renderItemView(appState, Global.getMenuHashMap());
                         itemList = new ArrayList<>(Global.getMenuHashMap().keySet());
-                    }
-                    else {  // appState == 4
+                    } else {  // appState == 4
                         serverController.renderShutDownView();
                         System.exit(0);
                     }
-                }
-                else {
+                } else {
                     serverController.renderErrorView();
                 }
             }
@@ -120,8 +108,7 @@ public class Main {
                                 int tempOperationOnItemCde = Integer.parseInt(operationOnItem);
                                 operationCdeOnItem = tempOperationOnItemCde >= 1 && tempOperationOnItemCde <= 4 ?
                                         tempOperationOnItemCde : 0;
-                            }
-                            catch (NumberFormatException e) {
+                            } catch (NumberFormatException e) {
                                 operationCdeOnItem = switch (operationOnItem.toLowerCase()) {
                                     case "u" -> 1;  // update food price
                                     case "a" -> 2;  // add new food
@@ -140,12 +127,9 @@ public class Main {
                                 HashMap<String, Food> dbResponse =
                                         serverController.notifyMenuModelToUpdatePrice(itemName, foodName, foodPrice);
 
-                                if (dbResponse.size() > 0) {
-                                    Global.syncMenuHashMap(dbResponse);
-                                }
+                                if (dbResponse.size() > 0) Global.syncMenuHashMap(dbResponse);
                                 operationCdeOnItem = 0;     // reset to perform other operations on the selected item
-                            }
-                            else if (operationCdeOnItem == 2) {
+                            } else if (operationCdeOnItem == 2) {
                                 Object[] foodDetails = admin.addFood();
                                 List<Object> foodDetailsObject = Arrays.asList(foodDetails);
 
@@ -156,12 +140,9 @@ public class Main {
                                 HashMap<String, Food> dbResponse = serverController
                                         .notifyMenuModelToCreateFood(itemName, foodName, price, maxQty);
 
-                                if (dbResponse.size() > 0) {
-                                    Global.syncMenuHashMap(dbResponse);
-                                }
+                                if (dbResponse.size() > 0) Global.syncMenuHashMap(dbResponse);
                                 operationCdeOnItem = 0;     // reset to perform other operations on the selected item
-                            }
-                            else if (operationCdeOnItem == 3) {
+                            } else if (operationCdeOnItem == 3) {
                                 HashMap<String, Integer> foodNameAndMaxQty = admin.updateFoodMaxQty();
                                 String reqFoodName = foodNameAndMaxQty.keySet().toArray()[0].toString();
                                 int reqMaxQty = foodNameAndMaxQty.get(reqFoodName);
@@ -169,12 +150,9 @@ public class Main {
                                 HashMap<String, Food> dbResponse = serverController
                                         .notifyMenuModelToUpdateMaxQty(itemName, reqFoodName, reqMaxQty);
 
-                                if (dbResponse.size() > 0) {
-                                    Global.syncMenuHashMap(dbResponse);
-                                }
+                                if (dbResponse.size() > 0) Global.syncMenuHashMap(dbResponse);
                                 operationCdeOnItem = 0;     // reset to perform other operations on the selected item
-                            }
-                            else if (operationCdeOnItem == 4) {
+                            } else if (operationCdeOnItem == 4) {
                                 String keyPressed;
 
                                 admin.viewMenu(Global.getMenuHashMap(), serverController);
@@ -183,29 +161,18 @@ public class Main {
                                 keyPressed = General.getRequestedSysOpt();
 
                                 if (keyPressed != null) operationCdeOnItem = 0;
-                            }
-                            else if (operationCdeOnItem == 0) {
+                            } else if (operationCdeOnItem == 0) {
                                 serverController.renderErrorView();
                             }
                         }
 
-                        if (operationCdeOnItem == 5) {
-                            updateOpItemCde = 0;
-                            continue;
-                        }
-                    }
-                    else if (updateOpItemCde == 0) {
+                        if (operationCdeOnItem == 5) updateOpItemCde = 0;
+                    } else if (updateOpItemCde == 0) {
                         serverController.renderErrorView();
                     }
                 }
-
-                if (updateOpItemCde == 8) {
-                    appState = 0;   // reset state of the app to default state
-                    continue;
-                }
-            }
-            // take order operation
-            else if (appState == 2) {
+                if (updateOpItemCde == 8) appState = 0;     // reset state of the app to default state
+            } else if (appState == 2) {                     // take order operation
                 int takeOrderOpItemCde = 0;
                 boolean shouldContOrder = true;
 
@@ -227,11 +194,9 @@ public class Main {
 
                         if (takeOrderOpItemCde >= 1 && takeOrderOpItemCde <= 6) {
                             takeOrderOpItemName = itemList.get(takeOrderOpItemCde - 1);
-                        }
-                        else if (takeOrderOpItemCde == 7 || takeOrderOpItemCde == 8) {  // if 'ba', program interprets it as '8' (i.e. back to previous)
+                        } else if (takeOrderOpItemCde == 7 || takeOrderOpItemCde == 8) {  // if 'ba', program interprets it as '8' (i.e. back to previous)
                             appState = 0;
-                        }
-                        else if (takeOrderOpItemCde == 0) {
+                        } else if (takeOrderOpItemCde == 0) {
                             serverController.renderErrorView();
                         }
                     }
@@ -270,10 +235,8 @@ public class Main {
                         }
 
                         if (!isReqFoodValid) serverController.renderOrderResultView().printInvalidFoodView();
-                    }
-                    // burgers, dogs, sandwiches
-                    else if (takeOrderOpItemCde == 2 || takeOrderOpItemCde == 3 || takeOrderOpItemCde == 6) {
-                        for (var food: Global.getMenuHashMap().get(itemName).entrySet()) {
+                    } else if (takeOrderOpItemCde == 2 || takeOrderOpItemCde == 3 || takeOrderOpItemCde == 6) {     // burgers, dogs, sandwiches
+                        for (var food : Global.getMenuHashMap().get(itemName).entrySet()) {
                             if (food.getKey().equalsIgnoreCase(foodNameRequest)) {
                                 if (food.getValue().get(0).getRemainQty() > 0) {
                                     List<HashMap<String, Double>> toppings = customer.requestToppings(serverController);
@@ -281,8 +244,7 @@ public class Main {
 
                                     CartForm tempCartForm = new CartForm(itemName, foodNameRequest, foodPrice, toppings);
                                     customer.createCartForm(serverController, tempCartForm);
-                                }
-                                else {
+                                } else {
                                     serverController.renderOrderResultView().printOutOfStockView();
                                 }
                                 isReqFoodValid = true;
@@ -290,8 +252,7 @@ public class Main {
                             }
                         }
                         if (!isReqFoodValid) serverController.renderOrderResultView().printInvalidFoodView();
-                    }
-                    else if (takeOrderOpItemCde == 0) {
+                    } else if (takeOrderOpItemCde == 0) {
                         serverController.renderErrorView();
                         continue;
                     }
@@ -306,28 +267,24 @@ public class Main {
                             if (contOrder.equals('y')) {
                                 takeOrderOpItemCde = 0;     // redirect back to the item selection view
                                 break;
-                            }
-                            else if (contOrder.equals('n')) {
+                            } else if (contOrder.equals('n')) {
                                 shouldContOrder = false;
-                            }
-                            else {
+                            } else {
                                 System.out.println("Invalid input. Please enter '\u001B[1my\u001B[0m/' or '\u001B[1mn\u001B[0m/'.");
                                 tempContOrder = "";
                             }
-                        }
-                        else {
+                        } else {
                             System.out.println("Please enter '\u001B[1my\u001B[0m/' or '\u001B[1mn\u001B[0m/'.");
                             tempContOrder = "";
                         }
                     } while(tempContOrder == "");
                 }
                 appState = 0;   // redirect back to the main menu
-            }
-            else if (appState == 3) {
+            } else if (appState == 3) {
                 Cart cart = new Cart();
+
                 List<CartForm> tempCart = cart.getTempCart();
                 List<CartForm> currentCart = cart.getCart();
-                boolean isPaymentValid = false;
 
                 if (tempCart.size() >= 1) {
                     if (tempCart.size() > 1) {
@@ -349,8 +306,7 @@ public class Main {
                         }
                     } else {
                         if (currentCart.size() == 0) {
-                            currentCart = tempCart;
-                            //Cart.setCart(tempCart);
+                            cart.setCart(tempCart);
                         } else {
                             CartForm itemInTempCart = tempCart.get(0);
                             String itemType = itemInTempCart.getItemType();
@@ -358,29 +314,16 @@ public class Main {
                             cart.accumulateQuantity(itemType, itemInTempCart);
                         }
                     }
-                    serverController.renderCartView(currentCart);
+                    cart.clearTempCart();
+                    serverController.renderCartView(currentCart, cart);
                 } else {
-                    serverController.renderCartView(currentCart);
+                    serverController.renderCartView(currentCart, cart);
                 }
 
-                do {
-                    System.out.print("Enter payment for your order: ");
-
-                    try {
-                        double paymentInput = Double.parseDouble(customer.makePayment());
-
-                        if (paymentInput == Cart.getTotal()) {
-                            System.out.println("Thank you. Have a good day!");
-                            appState = 0;   // redirect back to the main menu
-                            isPaymentValid = true;
-                        } else {
-                            System.out.println("Please try again.");
-                        }
-                    } catch(NumberFormatException e) {
-                        System.out.println("Your payment is not valid. Please try again.");
-                    }
-                } while (!isPaymentValid);
-                // break;
+                if (currentCart.size() > 0) {
+                    if (serverController.renderPaymentView(cart, customer)) cart.clearCart();
+                }
+                appState = 0;   // redirect back to the main menu
             }
         }
     }

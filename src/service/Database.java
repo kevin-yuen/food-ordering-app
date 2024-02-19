@@ -1,7 +1,6 @@
 package service;
 
 import component.Food;
-import general.General;
 
 import java.sql.*;
 import java.util.*;
@@ -19,11 +18,7 @@ public class Database {
             this.con = DriverManager.getConnection(
                     // url = "jdbc:[db]://[ip address]:[port]/[db schema]"
                     "jdbc:mysql://localhost:3306/foodorder", "root", "Nightfall44");
-        }
-        catch (ClassNotFoundException e) {
-            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, e.getMessage(), e);
-        }
-        catch (SQLException e) {
+        } catch (ClassNotFoundException | SQLException e) {
             Logger.getLogger(Database.class.getName()).log(Level.SEVERE, e.getMessage(), e);
         }
     }
@@ -48,7 +43,7 @@ public class Database {
             while (resultSet.next()) {
                 foodDets = new ArrayList<>();
 
-                for (var col: column) {
+                for (var col : column) {
                     if (resultSetMetaData.getColumnLabel(1).equalsIgnoreCase(col)) {
                         itemName = resultSet.getString(col);
 
@@ -56,17 +51,13 @@ public class Database {
                             itemNameChked = itemName;
                             foodNameAndDets = new HashMap<>();
                         }
-                    }
-                    else if (resultSetMetaData.getColumnLabel(2).equalsIgnoreCase(col)) {
+                    } else if (resultSetMetaData.getColumnLabel(2).equalsIgnoreCase(col)) {
                         foodName = resultSet.getString(col);
-                    }
-                    else if (resultSetMetaData.getColumnLabel(3).equalsIgnoreCase(col)) {
+                    } else if (resultSetMetaData.getColumnLabel(3).equalsIgnoreCase(col)) {
                         price = Double.parseDouble(resultSet.getString(col));
-                    }
-                    else if (resultSetMetaData.getColumnLabel(4).equalsIgnoreCase(col)) {
+                    } else if (resultSetMetaData.getColumnLabel(4).equalsIgnoreCase(col)) {
                         remainQty = Integer.parseInt(resultSet.getString(col));
-                    }
-                    else if (resultSetMetaData.getColumnLabel(5).equalsIgnoreCase(col)) {
+                    } else if (resultSetMetaData.getColumnLabel(5).equalsIgnoreCase(col)) {
                         maxQty = Integer.parseInt(resultSet.getString(col));
                     }
                 }
@@ -74,8 +65,7 @@ public class Database {
                 foodNameAndDets.putIfAbsent(foodName, foodDets);
                 menuItems.putIfAbsent(itemName, foodNameAndDets);
             }
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             Logger.getLogger(Database.class.getName()).log(Level.SEVERE, e.getMessage(), e);
         }
         return menuItems;
@@ -110,8 +100,7 @@ public class Database {
                 newFood = this.executeReadOp(queryGetNewFood, "itemName", "foodName", "price", "remainQty", "maxQty");
             }
             this.con.close();
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             Logger.getLogger(Database.class.getName()).log(Level.SEVERE, e.getMessage(), e);
         }
         return newFood;
@@ -155,28 +144,23 @@ public class Database {
             ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
 
             while (resultSet.next()) {
-                for (var col: columns) {
+                for (var col : columns) {
                     if (resultSetMetaData.getColumnLabel(1).equalsIgnoreCase(col)) {
                         itemName = resultSet.getString(col);
-                    }
-                    else if (resultSetMetaData.getColumnLabel(2).equalsIgnoreCase(col)) {
+                    } else if (resultSetMetaData.getColumnLabel(2).equalsIgnoreCase(col)) {
                         foodName = resultSet.getString(col);
-                    }
-                    else if (resultSetMetaData.getColumnLabel(3).equalsIgnoreCase(col)) {
+                    } else if (resultSetMetaData.getColumnLabel(3).equalsIgnoreCase(col)) {
                         price = Double.parseDouble(resultSet.getString(col));
-                    }
-                    else if (resultSetMetaData.getColumnLabel(4).equalsIgnoreCase(col)) {
+                    } else if (resultSetMetaData.getColumnLabel(4).equalsIgnoreCase(col)) {
                         remainQty = Integer.parseInt(resultSet.getString(col));
-                    }
-                    else if (resultSetMetaData.getColumnLabel(5).equalsIgnoreCase(col)) {
+                    } else if (resultSetMetaData.getColumnLabel(5).equalsIgnoreCase(col)) {
                         maxQty = Integer.parseInt(resultSet.getString(col));
                     }
                 }
             }
             food = !itemName.equals("") ? new Food(itemName, foodName, price, remainQty, maxQty) :
                     new Food(foodName, price, remainQty, maxQty);
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             Logger.getLogger(Database.class.getName()).log(Level.SEVERE, e.getMessage(), e);
         }
         return food;
@@ -190,8 +174,7 @@ public class Database {
             this.preparedStatement = this.con.prepareStatement(sql);
             rowCtn = this.preparedStatement.executeUpdate();
             this.con.close();
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             Logger.getLogger(Database.class.getName()).log(Level.SEVERE, e.getMessage(), e);
         }
         return rowCtn;

@@ -1,7 +1,5 @@
 package component;
 
-import general.General;
-
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -18,7 +16,6 @@ public class Admin extends Person {
         HashMap<String, Double> foodNameAndPrice = new HashMap<>() {
             {put(foodName, foodPrice);}
         };
-
         return foodNameAndPrice;
     }
 
@@ -37,7 +34,6 @@ public class Admin extends Person {
         HashMap<String, Integer> foodNameAndMaxQty = new HashMap<>() {
             {put(foodName, foodMaxQty);}
         };
-
         return foodNameAndMaxQty;
     }
 
@@ -49,8 +45,7 @@ public class Admin extends Person {
 
             try {
                 foodPrice = Double.parseDouble(scanner.nextLine());
-            }
-            catch(NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 System.out.println("Please set the price.");
                 continue;
             }
@@ -72,8 +67,7 @@ public class Admin extends Person {
 
             try {
                 foodMaxQty = Integer.parseInt(scanner.nextLine());
-            }
-            catch(NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 System.out.println("Please set the max. quantity.");
                 continue;
             }

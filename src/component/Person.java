@@ -27,10 +27,9 @@ public class Person {
             if (tmpFoodName.equalsIgnoreCase("")) {
                 System.out.println("Please enter food name.");
                 continue;
-            }
-            else {
+            } else {
                 String[] tmpFoodNameToClean = tmpFoodName.split(" ");
-                for (var name: tmpFoodNameToClean) {
+                for (var name : tmpFoodNameToClean) {
                     foodName += Character.toString(name.charAt(0)).toUpperCase() + name.substring(1) + " ";
                 }
                 foodName = foodName.trim();     // remove the last space

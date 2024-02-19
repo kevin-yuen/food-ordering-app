@@ -1,12 +1,13 @@
 package controller;
 
+import component.Cart;
 import component.CartForm;
+import component.Customer;
 import component.Food;
 import model.CartModel;
 import model.MenuModel;
 import view.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,7 @@ public class ServerController {
     private ToppingsView toppingsView;
     private ToppingSelectionResultView toppingSelectionResultView;
     private CartView cartView;
+    private PaymentView paymentView;
     private ShutdownView shutdownView;
 
     public ServerController(MenuModel menuModel, CartModel cartModel) {
@@ -37,6 +39,7 @@ public class ServerController {
         this.toppingsView = new ToppingsView();
         this.toppingSelectionResultView = new ToppingSelectionResultView();
         this.cartView = new CartView();
+        this.paymentView = new PaymentView();
         this.shutdownView = new ShutdownView();
     }
 
@@ -60,8 +63,7 @@ public class ServerController {
 
         if (dbResponse.size() > 0) {
             renderUpdateResultView().printCreateSuccessView();
-        }
-        else {
+        } else {
             renderUpdateResultView().printNoUpdateView();
         }
         return dbResponse;
@@ -79,31 +81,20 @@ public class ServerController {
     public HashMap<String, Food> notifyCartModelToUpdateRemainQty(String itemName, String foodName, int reqQty) {
         HashMap<String, Food> dbResponseUpdatedRemainQty = cartModel.sendDBRequestToUpdateRemainQty(
                 itemName, foodName, reqQty);
-        checkDBResponseToRenderOrderResultView(itemName, foodName, reqQty, dbResponseUpdatedRemainQty);
+        checkDBResponseToRenderOrderResultView(itemName, foodName, dbResponseUpdatedRemainQty);
 
         if (dbResponseUpdatedRemainQty.size() > 0) {
             return dbResponseUpdatedRemainQty;
-        }
-        else {
+        } else {
             return new HashMap<>();
         }
-//        boolean isSyncWithGlobalRequired = checkDBResponseToRenderOrderResultView(itemName, foodName, reqQty, dbResponseUpdatedRemainQty);
-//
-//        if (isSyncWithGlobalRequired) {
-//            return dbResponseUpdatedRemainQty;
-//        }
-//        else {
-//            return new HashMap<>();
-//        }
     }
 
-    private void checkDBResponseToRenderOrderResultView(String itemName, String foodName, int reqQty, HashMap<String, Food> dbResponse) {
+    private void checkDBResponseToRenderOrderResultView(String itemName, String foodName, HashMap<String, Food> dbResponse) {
         if (itemName != "Toppings") {
             if (dbResponse.size() > 0) {
-                //renderOrderResultView().determineViewToShow(itemName, foodName, reqQty);
                 renderOrderResultView().printOrderSuccessView(foodName);
-            }
-            else {
+            } else {
                 renderOrderResultView().printInvalidFoodView();
             }
         }
@@ -112,8 +103,7 @@ public class ServerController {
     private void checkDBResponseToRenderResultView(HashMap<String, Food> dbResponse) {
         if (dbResponse.size() > 0) {
             renderUpdateResultView().printUpdateSuccessView();
-        }
-        else {
+        } else {
             renderUpdateResultView().printNoUpdateView();
         }
     }
@@ -148,8 +138,12 @@ public class ServerController {
         toppingSelectionResultView.determineToppingResultView(toppingsOrder, invalidToppingsOrder);
     }
 
-    public void renderCartView(List<CartForm> currentCart) {
-        cartView.determineCartView(currentCart);
+    public void renderCartView(List<CartForm> currentCart, Cart cart) {
+        cartView.determineCartView(currentCart, cart);
+    }
+
+    public boolean renderPaymentView(Cart cart, Customer customer) {
+        return paymentView.printPaymentView(cart, customer);
     }
 
     public void renderShutDownView() {

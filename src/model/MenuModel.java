@@ -1,15 +1,11 @@
 package model;
 
 import component.Food;
-import general.General;
 import service.Database;
-import service.Global;
 
-import java.sql.ResultSet;
 import java.util.*;
 
 public class MenuModel {
-    //private Map<String, HashMap<String, List<Food>>> menuHashMap = new HashMap<>();
     private Database db;
 
     public MenuModel(Database db) {
@@ -21,7 +17,6 @@ public class MenuModel {
     // This function retrieves the latest food details of each food from foodorder.food in MySQL server
     //
     // @return The list of food details of each food
-    //
     //
     public Map<String, HashMap<String, List<Food>>> getLatestMenuItemsFromDB() {
         Map<String, HashMap<String, List<Food>>> latestMenuItemsFromDB;
@@ -59,8 +54,7 @@ public class MenuModel {
             if (tempDBResponse.size() > 0) {
                 dbResponse.put(itemName, tempDBResponse.get(itemName));
             }
-        }
-        else if (!oPrice.isPresent() && oReqMaxQty.isPresent()) {
+        } else if (!oPrice.isPresent() && oReqMaxQty.isPresent()) {
             // retrieve the current max quantity
             String query = String.format(
                     "SELECT i.name AS itemName, " +

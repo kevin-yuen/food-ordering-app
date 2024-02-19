@@ -16,21 +16,19 @@ public class ToppingsView {
         String message = "Please enter toppings (separate each by comma):\n";
         int toppingCount = 1;
 
-        for (var toppingName: toppingNames) {
+        for (var toppingName : toppingNames) {
             if (toppingName.equalsIgnoreCase("Grilled Onions") || toppingName.equalsIgnoreCase("Grilled Mushrooms")) {
                 String[] tempToppingName = toppingName.split(" ");
                 String fmtToppingName = "";
 
-                for (var tName: tempToppingName) {
+                for (var tName : tempToppingName) {
                     fmtToppingName += String.format("[\u001B[1m%s\u001B[0m]%s ", tName.charAt(0), tName.substring(1));
                 }
                 fmtToppingName = fmtToppingName.trim();
                 message += String.format("%s. %s%s\n", toppingCount, fmtToppingName.charAt(0), fmtToppingName.substring(1));
-            }
-            else if (toppingName.equalsIgnoreCase("Mustard")) {
+            } else if (toppingName.equalsIgnoreCase("Mustard")) {
                 message += String.format("%s. [\u001B[1m%s\u001B[0m]%s\n", toppingCount, toppingName.substring(0, 2), toppingName.substring(2));
-            }
-            else {
+            } else {
                 message += String.format("%s. [\u001B[1m%s\u001B[0m]%s\n", toppingCount, toppingName.charAt(0), toppingName.substring(1));
             }
             toppingCount++;

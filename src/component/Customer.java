@@ -30,8 +30,8 @@ public class Customer extends Person {
 
         // special handling to update remain quantity and retrieve topping price of toppings items
         if (tempToppings.size() > 0) {
-            for (var topping: tempToppings) {
-                for (Map.Entry<String, Double> tEntry: topping.entrySet()) {
+            for (var topping : tempToppings) {
+                for (Map.Entry<String, Double> tEntry : topping.entrySet()) {
                     HashMap<String, Food> toppingDBResponse = serverController.notifyCartModelToUpdateRemainQty("Toppings", tEntry.getKey(), 1);
                     double toppingPrice = toppingDBResponse.size() > 0 ? toppingDBResponse.get("Toppings").getPrice() : 0.0d;
 
@@ -43,7 +43,6 @@ public class Customer extends Person {
                     }
                 }
             }
-
             // param "List<Object> toppings" now contains {toppingName=toppingPrice}
             cartForm = new CartForm(itemName, foodNameRequest, foodPrice, toppings);
         }
@@ -65,8 +64,7 @@ public class Customer extends Person {
                 orderedQuantity = Integer.parseInt(tempOrderedQuantity);
 
                 if (orderedQuantity < 0) System.out.println("Quantity must be at least 1.");
-            }
-            catch (NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 System.out.println("Invalid quantity. Please try again.");
             }
         }
@@ -98,25 +96,23 @@ public class Customer extends Person {
                     HashMap<String, String> toppingNameCharMapping = General.composeToppingNameCharMapping(toppingNames);
 
                     // verify toppings request
-                    for (var order: tempToppingsOrder) {
+                    for (var order : tempToppingsOrder) {
                         boolean isToppingOrderInStock = false;
 
                         try {
                             // attempt to map for the topping name by topping number
                             int orderByNumber = Integer.parseInt(order);
 
-                            for (var toppingName: toppingNames) {
+                            for (var toppingName : toppingNames) {
                                 if (toppingNames.indexOf(toppingName) == orderByNumber-1 &&
                                         toppingDets.get(toppingName).get(0).getRemainQty() > 0) {
                                     toppingsOrder.add(new HashMap<>() {
                                         {put(toppingName, 0.0);}
                                     });
-                                    //toppingsOrder.add(toppingName);
                                     isToppingOrderInStock = true;
                                 }
                             }
-                        }
-                        catch (NumberFormatException e) {
+                        } catch (NumberFormatException e) {
                             // else, map for the topping name by topping key
                             for (Map.Entry<String, String> nameChar: toppingNameCharMapping.entrySet()) {
                                 String tName = nameChar.getKey();
@@ -125,7 +121,6 @@ public class Customer extends Person {
                                     toppingsOrder.add(new HashMap<>() {
                                         {put(tName, 0.0);}
                                     });
-                                    //toppingsOrder.add(tName);
                                     isToppingOrderInStock = true;
                                 }
                             }
@@ -136,19 +131,15 @@ public class Customer extends Person {
 
                     serverController.renderToppingSelectionResultView(toppingsOrder, invalidToppingsOrder);
                     break;
-                }
-                else if (proceed.equals('n')) {
+                } else if (proceed.equals('n')) {
                     break;
-                }
-                else {
+                } else {
                     System.out.println("Invalid input. Please enter '\u001B[1my\u001B[0m' or '\u001B[1mn\u001B[0m'.");
                 }
-            }
-            else {
+            } else {
                 System.out.println("Please enter '\u001B[1my\u001B[0m' or '\u001B[1mn\u001B[0m'.");
             }
         } while(addTopping);
-        //System.out.println("REQUESTTOPPINGS(): " + toppingsOrder);
         return toppingsOrder;
     }
 

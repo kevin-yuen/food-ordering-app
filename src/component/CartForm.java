@@ -31,7 +31,6 @@ public class CartForm {
     }
 
     public void writeToCart(CartForm cartForm) {
-        //Cart.addProduct(cartForm);
         Cart.setTempCart(cartForm);
     }
 

@@ -2,9 +2,6 @@ package general;
 
 // This class contains general methods that are used by other classes.
 
-import component.Food;
-import service.Global;
-
 import java.util.*;
 
 public class General {
@@ -20,14 +17,12 @@ public class General {
             if (boardLineCounter <= 3) {
                 if (boardLineCounter % 2 != 0) {
                     System.out.println("-".repeat(38));
-                }
-                else {
+                } else {
                     System.out.println("|" + " ".repeat(3) + sysName + " ".repeat(3) + "|");
                 }
 
                 boardLineCounter += 1;
-            }
-            else {
+            } else {
                 break;
             }
         }
@@ -48,8 +43,7 @@ public class General {
         try {
             int tempItemCde = Integer.parseInt(itemSelected);
             itemCde = tempItemCde >= 1 && tempItemCde <= 8 ? tempItemCde : 0;
-        }
-        catch (NumberFormatException e) {
+        } catch (NumberFormatException e) {
             itemCde = switch (itemSelected.toLowerCase()) {
                 case "f" -> 1;
                 case "b" -> 2;
@@ -68,19 +62,17 @@ public class General {
     public static HashMap<String, String> composeToppingNameCharMapping(List<String> toppingNames) {
         HashMap<String, String> nameCharMapping = new HashMap<>();
 
-        for (var toppingName: toppingNames) {
+        for (var toppingName : toppingNames) {
             String toppingChar = "";
             if (toppingName.equalsIgnoreCase("Grilled Onions") || toppingName.equalsIgnoreCase("Grilled Mushrooms")) {
                 String[] tempToppingName = toppingName.split(" ");
 
-                for (var tName: tempToppingName) {
+                for (var tName : tempToppingName) {
                     toppingChar += tName.toLowerCase().substring(0, 1);
                 }
-            }
-            else if (toppingName.equalsIgnoreCase("Mustard")) {
+            } else if (toppingName.equalsIgnoreCase("Mustard")) {
                 toppingChar = toppingName.toLowerCase().substring(0, 2);
-            }
-            else {
+            } else {
                 toppingChar = toppingName.toLowerCase().substring(0, 1);
             }
             nameCharMapping.put(toppingName, toppingChar);

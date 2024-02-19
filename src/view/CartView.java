@@ -3,7 +3,6 @@ package view;
 import component.Cart;
 import component.CartForm;
 
-import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -18,12 +17,11 @@ public class CartView {
 
     public CartView() {}
 
-    public void determineCartView(List<CartForm> currentCart) {
+    public void determineCartView(List<CartForm> currentCart, Cart cart) {
         if (currentCart.size() == 0) {
             printNoItemView();
-        }
-        else {
-            printItemView(currentCart);
+        } else {
+            printItemView(currentCart, cart);
         }
     }
 
@@ -39,7 +37,6 @@ public class CartView {
     }
 
     private String generateTwoLabelLine(String content1, String content2, int numOfSpToFillBeg, int numOfSpToFillEnd) {
-        //int numOfSpToFillBeg = 32, numOfSpToFillEnd = 35;
         int numOfSpRemain = borderLen - (content1.length() + content2.length()) - 2;    // subtract 2 due to * on both sides
         int numOfSpToFillBtw = numOfSpRemain - numOfSpToFillBeg - numOfSpToFillEnd;
 
@@ -57,7 +54,6 @@ public class CartView {
 
         for (int headerLCtner = 0; headerLCtner < 10; headerLCtner++) {
             if (headerLCtner == 0) {
-                //header += cartBorder;
                 header += "*".repeat(cartBorderLen);
             } else if (headerLCtner == 1 || headerLCtner == 2 || headerLCtner == 7) {
                 header += "*".concat(" ".repeat(148)).concat("*\n");    // empty line
@@ -93,7 +89,7 @@ public class CartView {
                 List<HashMap<String, Double>> toppings = item.getToppings();
 
                 if (toppings.size() > 0) {
-                    for (var topping: toppings) {
+                    for (var topping : toppings) {
                         for (Map.Entry<String, Double> tEntry: topping.entrySet()) {
                             String toppingName = tEntry.getKey();
                             String toppingPrice = String.format("$%.2f", tEntry.getValue());
@@ -115,36 +111,34 @@ public class CartView {
         return body;
     }
 
-    private String generateFooterSection(String cartBorder) {
+    private String generateFooterSection(String cartBorder, Cart cart) {
         String footer = "";
 
-        double subtotal = Cart.getSubtotal();
-        double salesTaxInDollarAmt = subtotal * Cart.getSalesTaxRate();
+        double subtotal = cart.getSubtotal();
+        double salesTaxInDollarAmt = subtotal * cart.getSalesTaxRate();
 
         String subtotalFmt = String.format("$%.2f", subtotal),
                 salesTaxFmt = String.format("$%.2f", salesTaxInDollarAmt),
-                totalFmt = String.format("$%.2f", Cart.getTotal());
+                totalFmt = String.format("$%.2f", cart.getTotal());
 
         for (int footerLCtner = 0; footerLCtner < 7; footerLCtner++) {
             if (footerLCtner == 0 || footerLCtner == 2 || footerLCtner == 5) {
                 footer += "*".concat(" ".repeat(148)).concat("*\n");    // empty line
-            }
-            else if (footerLCtner == 1 || footerLCtner == 3 || footerLCtner == 4) {
+            } else if (footerLCtner == 1 || footerLCtner == 3 || footerLCtner == 4) {
                 footer += switch(footerLCtner) {
                     case 1 -> generateTwoLabelLine(subtotalLabel, subtotalFmt,32, 35);
                     case 3 -> generateTwoLabelLine(salesTaxLabel, salesTaxFmt, 32, 35);
                     case 4 -> generateTwoLabelLine(totalLabel, totalFmt, 32, 35);
                     default -> "";
                 };
-            }
-            else {
+            } else {
                 footer += String.format("%s\n", cartBorder);
             }
         }
         return footer;
     }
 
-    public void printItemView(List<CartForm> currentCart) {
+    public void printItemView(List<CartForm> currentCart, Cart cart) {
         String view = "";
         String cartBorder = "*".repeat(borderLen);
         String divider = "*"
@@ -154,7 +148,7 @@ public class CartView {
                 .concat("*\n");
         String emptyL = "*".concat(" ".repeat(148)).concat("*\n");
 
-        view = generateHeaderSection(cartBorder) + divider + emptyL + generateBodySection(currentCart) + generateFooterSection(cartBorder);
+        view = generateHeaderSection(cartBorder) + divider + emptyL + generateBodySection(currentCart) + generateFooterSection(cartBorder, cart);
         System.out.print(view);
     }
 }

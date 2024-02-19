@@ -33,11 +33,9 @@ public class Food {
     public String toString() {
         if (this.itemName == null && this.foodName == null) {
             return this.price + ", " + this.remainQty + ", " + this.maxQty;
-        }
-        else if (this.itemName == null) {
+        } else if (this.itemName == null) {
             return this.foodName + ", " + this.price + ", " + this.remainQty + ", " + this.maxQty;
-        }
-        else {
+        } else {
             return this.itemName + ", " + this.foodName + ", " + this.price + ", " + this.remainQty + ", " + this.maxQty;
         }
     }

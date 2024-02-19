@@ -14,8 +14,4 @@ public class UpdateResultView {
     public void printCreateSuccessView() {
         System.out.println("Food added successfully.");
     }
-
-    public void printNoFoodView() { System.out.println("No such food in stock."); }
-
-    public void printFoodOutOfStockView() { System.out.println("The food is out of stock."); }
 }

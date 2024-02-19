@@ -11,33 +11,28 @@ public class ToppingSelectionResultView {
 
         if (invalidToppingsOrder.size() > 0 && toppingsOrder.size() == 0) {
             printAllInvalidToppingsView();
-        }
-        else if (invalidToppingsOrder.size() == 0 && toppingsOrder.size() > 0){
+        } else if (invalidToppingsOrder.size() == 0 && toppingsOrder.size() > 0){
             printAllValidToppingsView();
-        }
-        else if (invalidToppingsOrder.size() > 0) {     // and toppingsOrder.size() > 0
+        } else if (invalidToppingsOrder.size() > 0) {     // and toppingsOrder.size() > 0
             printSomeInvalidToppingsView(toppingsOrder);
-        }
-        else {  // customer did not enter any input for topping selection
+        } else {  // customer did not enter any input for topping selection
             System.out.println("Please enter at least one topping");
         }
     }
 
     private void printSomeInvalidToppingsView(List<HashMap<String, Double>> toppingsOrder) {
         String validToppings = "";
-        for (var tElement: toppingsOrder) {
-            for (Map.Entry<String, Double> tMapElement: tElement.entrySet()) {
+        for (var tElement : toppingsOrder) {
+            for (Map.Entry<String, Double> tMapElement : tElement.entrySet()) {
                 String topping = tMapElement.getKey();
 
                 if (toppingsOrder.size() > 2) {
                     if (toppingsOrder.indexOf(topping) < toppingsOrder.size()-2) {
                         topping = topping.concat(", ");
-                    }
-                    else if (toppingsOrder.indexOf(topping) == toppingsOrder.size()-2) {
+                    } else if (toppingsOrder.indexOf(topping) == toppingsOrder.size()-2) {
                         topping = topping.concat(" and ");
                     }
-                }
-                else if (toppingsOrder.size() == 2) {
+                } else if (toppingsOrder.size() == 2) {
                     if (toppingsOrder.indexOf(topping) == 0) topping = topping.concat(" and ");
                 }
 

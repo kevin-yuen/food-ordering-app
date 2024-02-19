@@ -1,9 +1,7 @@
 package service;
 
 import component.Food;
-import general.General;
 
-import java.sql.Array;
 import java.util.*;
 
 public class Global {
@@ -32,7 +30,7 @@ public class Global {
             HashMap<String, List<Food>> foodsMenuHashMap = menuHashMap.get(itemName);
             boolean isFoodExist = false;
 
-            for (Map.Entry<String, List<Food>> e: foodsMenuHashMap.entrySet() ) {
+            for (Map.Entry<String, List<Food>> e : foodsMenuHashMap.entrySet() ) {
                 String menuHashMapFoodName = e.getKey();
                 if (menuHashMapFoodName.equalsIgnoreCase(foodName)) {
                     isFoodExist = true;

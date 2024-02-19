@@ -3,9 +3,7 @@ package model;
 import component.Food;
 import service.Database;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class CartModel {
     private Database db;
@@ -49,13 +47,11 @@ public class CartModel {
                             "SET f.remainQty = (f.remainQty - %d)\n" +
                             "WHERE f.name = '%s';", reqQty, foodName), foodName);
                     updatedFoodDets = foodDetsWithUpdatedRemainQty.get(itemName);
-                }
-                else {
+                } else {
                     updatedFoodDets = db.executeReadOp(query, "foodName", "price", "remainQty",
                             "maxQty");
                 }
-            }
-            else {
+            } else {
                 updatedFoodDets = db.executeReadOp(query, "foodName", "price", "remainQty",
                         "maxQty");
             }
