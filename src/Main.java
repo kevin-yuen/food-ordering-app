@@ -106,7 +106,7 @@ public class Main {
 
                             try {
                                 int tempOperationOnItemCde = Integer.parseInt(operationOnItem);
-                                operationCdeOnItem = tempOperationOnItemCde >= 1 && tempOperationOnItemCde <= 4 ?
+                                operationCdeOnItem = tempOperationOnItemCde >= 1 && tempOperationOnItemCde <= 5 ?
                                         tempOperationOnItemCde : 0;
                             } catch (NumberFormatException e) {
                                 operationCdeOnItem = switch (operationOnItem.toLowerCase()) {

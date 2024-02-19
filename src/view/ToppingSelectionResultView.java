@@ -24,19 +24,19 @@ public class ToppingSelectionResultView {
         String validToppings = "";
         for (var tElement : toppingsOrder) {
             for (Map.Entry<String, Double> tMapElement : tElement.entrySet()) {
-                String topping = tMapElement.getKey();
+                String toppingName = tMapElement.getKey();
 
                 if (toppingsOrder.size() > 2) {
-                    if (toppingsOrder.indexOf(topping) < toppingsOrder.size()-2) {
-                        topping = topping.concat(", ");
-                    } else if (toppingsOrder.indexOf(topping) == toppingsOrder.size()-2) {
-                        topping = topping.concat(" and ");
+                    if (toppingsOrder.indexOf(tElement) < toppingsOrder.size()-2) {
+                        toppingName = toppingName.concat(", ");
+                    } else if (toppingsOrder.indexOf(tElement) == toppingsOrder.size()-2) {
+                        toppingName = toppingName.concat(" and ");
                     }
                 } else if (toppingsOrder.size() == 2) {
-                    if (toppingsOrder.indexOf(topping) == 0) topping = topping.concat(" and ");
+                    if (toppingsOrder.indexOf(tElement) == 0) toppingName = toppingName.concat(" and ");
                 }
 
-                validToppings += topping;
+                validToppings += toppingName;
             }
         }
 
