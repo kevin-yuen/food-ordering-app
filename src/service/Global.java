@@ -1,5 +1,13 @@
 package service;
 
+/**
+ * This class ensures that the global variable, menuHashMap, is up-to-date. Ad-hoc request of viewing the entire food
+ * menu will directly extract the food item data from menuHashMap.
+ *
+ * @author Kevin Yuen
+ * @lastUpdatedDate 2/19/2024
+ */
+
 import component.Food;
 
 import java.util.*;
@@ -42,10 +50,23 @@ public class Global {
         }
     }
 
+    // Update the global variable, menuHashMap
+    //
+    // This function updates the global variable, menuHashMap, after initial data retrieval from MySQL server before
+    // the program continues.
+    //
+    // @param dbResponse = the most updated details of the food retrieved from DB
+    //
     public static void setMenuHashMap(Map<String, HashMap<String, List<Food>>> latestMenuItems) {
         menuHashMap = latestMenuItems;
     }
 
+    // Retrieve the global variable, menuHashMap
+    //
+    // This function retrieves the global variable, menuHashMap.
+    //
+    // @return the latest list of food items
+    //
     public static Map<String, HashMap<String, List<Food>>> getMenuHashMap() {
         return menuHashMap;
     }

@@ -23,8 +23,8 @@ public class CartModel {
                 "FROM foodorder.food f\n" +
                 "INNER JOIN foodorder.item i\n" +
                 "ON f.itemId = i.itemId\n" +
-                "WHERE f.name = '%s'\n" +
-                "AND i.name = '%s';", foodName, itemName);
+                "WHERE f.name = \"%s\"\n" +
+                "AND i.name = \"%s\";", foodName, itemName);
         Food foodRSetCkQtyInStock = db.executeReadOp(queryCkQtyInStock,
                 "itemName", "foodName", "price", "remainQty", "maxQty");
 
@@ -37,7 +37,7 @@ public class CartModel {
                     "FROM foodorder.food f\n" +
                     "INNER JOIN foodorder.item i\n" +
                     "ON f.itemId = i.itemId\n" +
-                    "WHERE f.name = '%s';", foodName);
+                    "WHERE f.name = \"%s\";", foodName);
 
             if (foodRSetCkQtyInStock.getRemainQty() >= 1) {
                 if (foodRSetCkQtyInStock.getRemainQty() >= reqQty) {
@@ -45,7 +45,7 @@ public class CartModel {
                             "INNER JOIN foodorder.item i\n" +
                             "ON f.itemId = i.itemId\n" +
                             "SET f.remainQty = (f.remainQty - %d)\n" +
-                            "WHERE f.name = '%s';", reqQty, foodName), foodName);
+                            "WHERE f.name = \"%s\";", reqQty, foodName), foodName);
                     updatedFoodDets = foodDetsWithUpdatedRemainQty.get(itemName);
                 } else {
                     updatedFoodDets = db.executeReadOp(query, "foodName", "price", "remainQty",

@@ -1,5 +1,12 @@
 package view;
 
+/**
+ * This class compiles and formats food item options.
+ *
+ * @author Kevin Yuen
+ * @lastUpdatedDate 2/19/2024
+ */
+
 import component.Food;
 
 import java.util.ArrayList;
@@ -11,6 +18,14 @@ import java.util.stream.Collectors;
 public class ItemView {
     public ItemView() {}
 
+    // Compile and format available food item options
+    //
+    // This function compiles and styles food item options
+    //
+    // @param appState = the current operation that user wants to perform, menuHashMap = the latest list of food items
+    //
+    // @return The entire message that asks user to select a food item
+    //
     public String printItemView(int appState, Map<String, HashMap<String, List<Food>>> menuHashMap) {
         List<String> itemList;
         String itemSelectMessage;

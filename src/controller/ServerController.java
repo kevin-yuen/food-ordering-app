@@ -1,5 +1,13 @@
 package controller;
 
+/**
+ * This class handles user requests by forwarding them to Model layer for data retrieval,
+ * redirecting db responses to View layer for presentation, and sending back presentation outputs to user.
+ *
+ * @author Kevin Yuen
+ * @lastUpdatedDate 2/19/2024
+ */
+
 import component.Cart;
 import component.CartForm;
 import component.Customer;
@@ -43,7 +51,13 @@ public class ServerController {
         this.shutdownView = new ShutdownView();
     }
 
-    public Map<String, HashMap<String, List<Food>>> notifyMenuModelToGetsFromDB() {
+    // Redirect the system request to MenuModel
+    //
+    // This function redirects the system request of retrieving the latest menu items to MenuModel
+    //
+    // @return The list of food details of each food per MenuModel
+    //
+    public Map<String, HashMap<String, List<Food>>> notifyMenuModelToGetFromDB() {
         return menuModel.getLatestMenuItemsFromDB();
     }
 
@@ -112,10 +126,21 @@ public class ServerController {
         errorView.printErrorView();
     }
 
+    // Redirect the system request to ServerErrorView
+    //
+    // This function redirects system request to ServerErrorView when the system fails to retrieve data from DB for the
+    // first time.
+    //
     public void renderServerErrorView() {
         serverErrorView.printServerErrorView();
     }
 
+    // Redirect the system request to ItemView
+    //
+    // This function redirects to ItemView after the system successfully retrieves data from DB for the first time.
+    //
+    // @return The entire message that asks user to select a food item
+    //
     public String renderItemView(int appState, Map<String, HashMap<String, List<Food>>> menuHashMap) {
         return itemView.printItemView(appState, menuHashMap);
     }

@@ -78,12 +78,12 @@ public class Database {
                 "remainQty, " +
                 "maxQty\n" +
                 "FROM foodorder.food\n" +
-                "WHERE name = '%s';", newFoodName);
+                "WHERE name = \"%s\";", newFoodName);
 
         try {
             // check if the new food already exists
             Food foodRSet = this.executeReadOp(query, "foodName", "price", "remainQty", "maxQty");
-            if (foodRSet.getFoodName() != null) {
+            if (foodRSet.getFoodName() == "") {
                 this.executeManipulateOp(sql);
 
                 String queryGetNewFood = String.format("SELECT i.name AS itemName,\n" +
@@ -119,7 +119,7 @@ public class Database {
                     "FROM foodorder.food f\n" +
                     "INNER JOIN foodorder.item i\n" +
                     "ON f.itemId = i.itemId\n" +
-                    "WHERE f.name = '%s';", foodName);
+                    "WHERE f.name = \"%s\";", foodName);
 
             Food foodRSet = this.executeReadOp(query, "itemName", "foodName", "price", "remainQty", "maxQty");
             Food foodDets = new Food(foodRSet.getFoodName(), foodRSet.getPrice(), foodRSet.getRemainQty(),

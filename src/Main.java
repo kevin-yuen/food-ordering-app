@@ -10,7 +10,8 @@ import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
-        int appState = 0;   // 1 = update menu; 2 = take order
+        boolean isSysOn = true;
+        int appState = 0;   // 1 = update menu; 2 = take order; 3 = view cart; 4 = shut down the system
 
         Database db = new Database();
 
@@ -22,7 +23,7 @@ public class Main {
 
         General.drawBoard();
 
-        while (true) {
+        while (isSysOn) {
             String viewRendered = "";
             ArrayList<String> itemList = new ArrayList<>();
 
@@ -62,7 +63,7 @@ public class Main {
                 if (appState != 0) {
                     if (appState >= 1 && appState <= 3) {
                         Map<String, HashMap<String, List<Food>>> latestMenuItemsFromDB =
-                                serverController.notifyMenuModelToGetsFromDB();
+                                serverController.notifyMenuModelToGetFromDB();
 
                         if (latestMenuItemsFromDB.size() >= 1) {
                             Global.setMenuHashMap(latestMenuItemsFromDB);
@@ -74,6 +75,7 @@ public class Main {
                     } else {  // appState == 4
                         serverController.renderShutDownView();
                         System.exit(0);
+                        isSysOn = false;    // the program ends
                     }
                 } else {
                     serverController.renderErrorView();

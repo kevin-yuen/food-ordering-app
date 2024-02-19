@@ -1,5 +1,13 @@
 package model;
 
+/**
+ * This class is responsible for interacting with the database by retrieving, creating, updating, and deleting data per
+ * request from ServerController.
+ *
+ * @author Kevin Yuen
+ * @lastUpdatedDate 2/19/2024
+ */
+
 import component.Food;
 import service.Database;
 
@@ -12,11 +20,11 @@ public class MenuModel {
         this.db = db;
     }
 
-    // Fetch the latest food details of each food from foodorder.food
+    // Fetch the latest details of each food from foodorder.food
     //
-    // This function retrieves the latest food details of each food from foodorder.food in MySQL server
+    // This function retrieves the latest details of each food from foodorder.food in MySQL server
     //
-    // @return The list of food details of each food
+    // @return The list of details of each food
     //
     public Map<String, HashMap<String, List<Food>>> getLatestMenuItemsFromDB() {
         Map<String, HashMap<String, List<Food>>> latestMenuItemsFromDB;
@@ -46,9 +54,9 @@ public class MenuModel {
             tempDBResponse = db.updateFoodDets(String.format("UPDATE food f " +
                             "INNER JOIN item i " +
                             "SET f.price = %f " +
-                            "WHERE f.name = '%s' " +
+                            "WHERE f.name = \"%s\" " +
                             "AND f.itemId = i.itemId " +
-                            "AND i.name = '%s';", requestedPrice, foodName, itemName),
+                            "AND i.name = \"%s\";", requestedPrice, foodName, itemName),
                     foodName);
 
             if (tempDBResponse.size() > 0) {
@@ -65,8 +73,8 @@ public class MenuModel {
                             "FROM food f\n" +
                             "INNER JOIN item i\n" +
                             "ON f.itemId = i.itemId\n" +
-                            "WHERE i.name = '%s'\n" +
-                            "AND f.name = '%s';", itemName, foodName);
+                            "WHERE i.name = \"%s\"\n" +
+                            "AND f.name = \"%s\";", itemName, foodName);
             Food foodRSet = db.executeReadOp(query, "itemName", "foodName", "price", "remainQty", "maxQty");
             String iName = null, fName = null;
             int curRemainQty, curMaxQty = 0;
@@ -84,9 +92,9 @@ public class MenuModel {
                     tempDBResponse = db.updateFoodDets(String.format("UPDATE food f " +
                                     "INNER JOIN item i " +
                                     "SET f.maxQty = %d " +
-                                    "WHERE f.name = '%s' " +
+                                    "WHERE f.name = \"%s\" " +
                                     "AND f.itemId = i.itemId " +
-                                    "AND i.name = '%s';", requestedMaxQty, fName, iName),
+                                    "AND i.name = \"%s\";", requestedMaxQty, fName, iName),
                             fName);
                 }
             }
@@ -105,8 +113,8 @@ public class MenuModel {
         HashMap<String, Food> updatedRemainQty = db.updateFoodDets(String.format("UPDATE foodorder.food f\n" +
                 "INNER JOIN foodorder.item i\n" +
                 "SET f.remainQty = (f.remainQty + (%d - %d))\n" +
-                "WHERE i.name = '%s'\n" +
-                "AND f.name = '%s'\n" +
+                "WHERE i.name = \"%s\"\n" +
+                "AND f.name = \"%s\"\n" +
                 "AND f.itemid = i.itemid;", requestedMaxQty, currentMaxQty, itemName, foodName), foodName);
 
         return updatedRemainQty;
@@ -116,12 +124,12 @@ public class MenuModel {
         HashMap<String, Food> newFoodHashMap = new HashMap<>();
         Food newFood = db.createNewFood(String.format("INSERT INTO foodorder.food (" +
                         "name, itemId, price, remainQty, maxQty)\n" +
-                        "VALUES ('%s', (\n" +
+                        "VALUES (\"%s\", (\n" +
                         "SELECT itemId\n" +
                         "FROM foodorder.item\n" +
-                        "WHERE name = '%s'), %f, %d, %d);", foodName, itemName, price, maxQty, maxQty), foodName);
+                        "WHERE name = \"%s\"), %f, %d, %d);", foodName, itemName, price, maxQty, maxQty), foodName);
 
-        newFoodHashMap.put(itemName, newFood);
+        if (newFood.getFoodName() != null) newFoodHashMap.put(itemName, newFood);
         return newFoodHashMap;
     }
 }

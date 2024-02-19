@@ -80,11 +80,19 @@ public class General {
         return nameCharMapping;
     }
 
+    // Capture user's selected option
+    //
+    // This function captures user's selected option throughout the program (for example, Operation menu).
+    //
     public static void setRequestedSysOpt() {
         Scanner scanner = new Scanner(System.in);
         requestedSysOpt = scanner.nextLine();
     }
 
+    // Retrieve user's selected option
+    //
+    // This function retrieves user's selected option throughout the program (for example, Operation menu).
+    //
     public static String getRequestedSysOpt() {
         return requestedSysOpt;
     }
