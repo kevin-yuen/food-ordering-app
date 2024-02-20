@@ -18,14 +18,16 @@ import java.util.stream.Collectors;
 public class ItemView {
     public ItemView() {}
 
-    // Compile and format available food item options
-    //
-    // This function compiles and styles food item options
-    //
-    // @param appState = the current operation that user wants to perform, menuHashMap = the latest list of food items
-    //
-    // @return The entire message that asks user to select a food item
-    //
+    /**
+     * Compile and format available food item options
+     *
+     * This function compiles and styles food item options.
+     *
+     *
+     * @param   appState        the current operation that user wants to perform
+     * @param   menuHashMap     the latest food item list
+     * @return                  the entire message that asks user to select a food item
+     */
     public String printItemView(int appState, Map<String, HashMap<String, List<Food>>> menuHashMap) {
         List<String> itemList;
         String itemSelectMessage;

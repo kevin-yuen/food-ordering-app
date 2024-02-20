@@ -51,12 +51,13 @@ public class ServerController {
         this.shutdownView = new ShutdownView();
     }
 
-    // Redirect the system request to MenuModel
-    //
-    // This function redirects the system request of retrieving the latest menu items to MenuModel
-    //
-    // @return The list of food details of each food per MenuModel
-    //
+    /**
+     * Redirect the system request to MenuModel
+     *
+     * This function redirects the system request of retrieving the latest menu items to MenuModel
+     *
+     * @return      The list of food details of each food per MenuModel
+     */
     public Map<String, HashMap<String, List<Food>>> notifyMenuModelToGetFromDB() {
         return menuModel.getLatestMenuItemsFromDB();
     }
@@ -122,25 +123,34 @@ public class ServerController {
         }
     }
 
+    /**
+     * Redirect the system to ErrorView
+     *
+     * This function redirects system to ErrorView if user chooses an invalid operation option
+     */
     public void renderErrorView() {
         errorView.printErrorView();
     }
 
-    // Redirect the system request to ServerErrorView
-    //
-    // This function redirects system request to ServerErrorView when the system fails to retrieve data from DB for the
-    // first time.
-    //
+    /**
+     * Redirect the system request to ServerErrorView
+     *
+     * This function redirects system request to ServerErrorView when the system fails to retrieve data from DB for the
+     * first time.
+     */
     public void renderServerErrorView() {
         serverErrorView.printServerErrorView();
     }
 
-    // Redirect the system request to ItemView
-    //
-    // This function redirects to ItemView after the system successfully retrieves data from DB for the first time.
-    //
-    // @return The entire message that asks user to select a food item
-    //
+    /**
+     * Redirect the system request to ItemView
+     *
+     * This function redirects to ItemView after the system successfully retrieves data from DB for the first time.
+     *
+     * @param   appState        current app status, which is determined by the selected operation option
+     * @param   menuHashMap     the latest food item list
+     * @return                  The entire message that asks user to select a food item
+     */
     public String renderItemView(int appState, Map<String, HashMap<String, List<Food>>> menuHashMap) {
         return itemView.printItemView(appState, menuHashMap);
     }
@@ -171,6 +181,11 @@ public class ServerController {
         return paymentView.printPaymentView(cart, customer);
     }
 
+    /**
+     * Redirect the system to ShutDownView
+     *
+     * This function redirects to ShutDownView when appState becomes 4 (i.e. user chooses to shut down the system).
+     */
     public void renderShutDownView() {
         shutdownView.printShutDownView();
     }

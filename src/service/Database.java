@@ -1,5 +1,13 @@
 package service;
 
+/**
+ * This class 1) helps set up the connectivity between MySQL server and the system, 2) executes data retrieval and
+ * manipulation operations in DB, and 3) returns DB results.
+ *
+ * @author Kevin Yuen
+ * @lastUpdatedDate 2/19/2024
+ */
+
 import component.Food;
 
 import java.sql.*;
@@ -12,6 +20,11 @@ public class Database {
     private Statement statement;
     private PreparedStatement preparedStatement;
 
+    /**
+     * Set up DB connection
+     *
+     * This function sets up connectivity between MySQL server and the system.
+     */
     public void createDBConnection() {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");     // driver for mysql
@@ -106,6 +119,19 @@ public class Database {
         return newFood;
     }
 
+    /**
+     * Update detail of the food in DB and retrieve the most updated details of the food from DB
+     *
+     * This function updates detail of the given food name in DB and retrieves the most updated details of the food
+     * from DB after DB update.
+     * Possible field value updates:    foodorder.food.price
+     *                                  foodorder.food.remainQty
+     *                                  foodorder.food.maxQty
+     *
+     * @param       sql             update food price of the specific food under the specific item category
+     * @param       foodName        the given food name whose food price is being updated
+     * @return                      the most updated food details along with the name of its item category
+     */
     public HashMap<String, Food> updateFoodDets(String sql, String foodName) {
         HashMap<String, Food> latestFoodDets = new HashMap<>();
         int rowCountUpdated = executeManipulateOp(sql);
@@ -129,6 +155,24 @@ public class Database {
         return latestFoodDets;
     }
 
+    /**
+     * Retrieve the latest food details of a particular food
+     *
+     * This function retrieves the latest food details of a particular food from DB based on the given food name and
+     * if the food name is found under the specific item category, a new Food object will be created along with its
+     * item name based on the latest details from DB; otherwise, a new Food object will be created without item name.
+     *
+     * @param       sql         look up a specific food record from foodorder.food
+     * @param       columns     foodorder.item.name
+     *                          foodorder.food.name
+     *                          foodorder.food.price
+     *                          foodorder.food.remainQty
+     *                          foodorder.food.maxQty
+     * @return                  possible returns:
+     *                              food object with its item name
+     *                              food object without item name
+     *                              empty food object
+     */
     public Food executeReadOp(String sql, String... columns) {
         Food food = new Food();
         createDBConnection();
@@ -166,6 +210,17 @@ public class Database {
         return food;
     }
 
+    /**
+     * Execute DB update on food record
+     *
+     * This function executes update on food detail(s) in DB.
+     * Possible field value updates:    foodorder.food.price
+     *                                  foodorder.food.remainQty
+     *                                  foodorder.food.maxQty
+     *
+     * @param       sql     update food price of the specific food under the specific item category
+     * @return              count of updated rows
+     */
     private int executeManipulateOp(String sql) {
         int rowCtn = 0;
         createDBConnection();

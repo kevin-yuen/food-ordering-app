@@ -1,6 +1,11 @@
 package general;
 
-// This class contains general methods that are used by other classes.
+/**
+ * This class contains general methods that are used by other classes.
+ *
+ * @author Kevin Yuen
+ * @lastUpdatedDate 2/19/2024
+ */
 
 import java.util.*;
 
@@ -9,6 +14,11 @@ public class General {
 
     public General() {}
 
+    /**
+     * Create border around the system name
+     *
+     * This function creates border around the system name and prints out the border and the system name.
+     */
     public static void drawBoard() {
         String sysName = "FIVE GUYS FOOD ORDERING SYSTEM";
         int boardLineCounter = 1;
@@ -37,6 +47,15 @@ public class General {
         return refomattedValue;
     }
 
+    /**
+    * Verify user's input on food item selection
+    *
+    * This function verifies user's input on food item selection and if an alphabetical input is provided, it will
+    * convert the input to the corresponding item option number.
+    *
+    * @param   itemSelected    user's input on food item selection
+    * @return                  the corresponding item option number
+     */
     public static int verifyItemSelection(String itemSelected) {
         int itemCde;
 
@@ -80,19 +99,21 @@ public class General {
         return nameCharMapping;
     }
 
-    // Capture user's selected option
-    //
-    // This function captures user's selected option throughout the program (for example, Operation menu).
-    //
+    /**
+     * Capture user's selected option
+     *
+     * This function captures user's selected option throughout the program (for example, Operation menu).
+     */
     public static void setRequestedSysOpt() {
         Scanner scanner = new Scanner(System.in);
         requestedSysOpt = scanner.nextLine();
     }
 
-    // Retrieve user's selected option
-    //
-    // This function retrieves user's selected option throughout the program (for example, Operation menu).
-    //
+    /**
+     * Retrieve user's selected option
+     *
+     * This function retrieves user's selected option throughout the program (for example, Operation menu).
+     */
     public static String getRequestedSysOpt() {
         return requestedSysOpt;
     }

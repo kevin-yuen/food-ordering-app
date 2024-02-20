@@ -1,5 +1,12 @@
 package component;
 
+/**
+ * This class holds the specific functions that an admin can perform in the system.
+ *
+ * @author Kevin Yuen
+ * @lastUpdatedDate 2/19/2024
+ */
+
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -10,6 +17,14 @@ public class Admin extends Person {
         super(name);
     }
 
+    /**
+     * Capture the food name and its new price
+     *
+     * This function captures the name of the food which user wants to perform operation on and the new price of the
+     * given food name.
+     *
+     * @return      the food name and its new price
+     */
     public HashMap<String, Double> updateFoodPrice() {
         String foodName = requestUserFood();
         double foodPrice = getRequestedPrice();
@@ -37,6 +52,13 @@ public class Admin extends Person {
         return foodNameAndMaxQty;
     }
 
+    /**
+     * Request user to provide a new price of the food which he wants to perform operation on.
+     *
+     * This function requests user to provide a new, valid price of the food which he wants to perform operation on.
+     *
+     * @return      the new food price that user provides
+     */
     private double getRequestedPrice() {
         double foodPrice = 0.0d;
 
