@@ -1,5 +1,12 @@
 package view;
 
+/**
+ * This class styles the available topping options.
+ *
+ * @author Kevin Yuen
+ * @lastUpdatedDate 2/19/2024
+ */
+
 import component.Food;
 import service.Global;
 
@@ -10,6 +17,15 @@ import java.util.List;
 public class ToppingsView {
     public ToppingsView() {}
 
+    /**
+     * Style the available topping options
+     *
+     * This class styles the available topping options. The initial letter will be bold. If there are 2 topping names
+     * begin with the same initial letter, the first 2 letters of the second topping option in the list will be bold
+     * instead.
+     *
+     * @return  the list of styled topping names
+     */
     public String printToppingsView() {
         HashMap<String, List<Food>> toppings = Global.getMenuHashMap().get("Toppings");
         List<String> toppingNames = new ArrayList<>(toppings.keySet());

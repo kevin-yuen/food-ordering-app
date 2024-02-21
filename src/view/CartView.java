@@ -1,5 +1,12 @@
 package view;
 
+/**
+ * This class is responsible for creating and formatting the cart view for the customer.
+ *
+ * @author Kevin Yuen
+ * @lastUpdatedDate 2/19/2024
+ */
+
 import component.Cart;
 import component.CartForm;
 
@@ -17,18 +24,40 @@ public class CartView {
 
     public CartView() {}
 
+    /**
+     * Determine the final cart view to display to the customer
+     *
+     * This function determines which cart view to display to the customer.
+     *
+     * @param   currentCart     hold the accumulated quantity of each food item that the customer orders.
+     * @param   cart            cart object
+     */
     public void determineCartView(List<CartForm> currentCart, Cart cart) {
         if (currentCart.size() == 0) {
-            printNoItemView();
+            printNoItemInCartView();
         } else {
-            printItemView(currentCart, cart);
+            printCartView(currentCart, cart);
         }
     }
 
-    public void printNoItemView() {
+    /**
+     * Print out no item view
+     *
+     * This function prints out no item view if no item is found in cart.
+     *
+     */
+    private void printNoItemInCartView() {
         System.out.println("No item in cart.");
     }
 
+    /**
+     * Format the cart
+     *
+     * This function formats the line that has only one content in the cart view.
+     *
+     * @param   content     detail of the store
+     * @return              the entire line that contains only one content
+     */
     private String generateOneLabelLine(String content) {
         int numOfSpRemain = borderLen - content.length() - 2;   // subtract 2 due to * on both sides
         int numOfSpBeg = numOfSpRemain / 2, numOfSpEnd = numOfSpRemain - numOfSpBeg;
@@ -36,6 +65,17 @@ public class CartView {
         return "*".concat(" ".repeat(numOfSpBeg)).concat(content).concat(" ".repeat(numOfSpEnd)).concat("*\n");
     }
 
+    /**
+     * Format the cart
+     *
+     * This function formats the line that has 2 contents in the cart view.
+     *
+     * @param   content1            the content on the left-hand side of the cart view
+     * @param   content2            the content on the right-hand side of the cart view
+     * @param   numOfSpToFillBeg    the number of spaces to fill in prior to the content on the left-hand side of the cart view
+     * @param   numOfSpToFillEnd    the number of spaces to fill in after the content on the right-hand side of the cart view
+     * @return                      the entire line that contains 2 contents
+     */
     private String generateTwoLabelLine(String content1, String content2, int numOfSpToFillBeg, int numOfSpToFillEnd) {
         int numOfSpRemain = borderLen - (content1.length() + content2.length()) - 2;    // subtract 2 due to * on both sides
         int numOfSpToFillBtw = numOfSpRemain - numOfSpToFillBeg - numOfSpToFillEnd;
@@ -43,6 +83,19 @@ public class CartView {
         return "*".concat(" ".repeat(numOfSpToFillBeg)).concat(content1).concat(" ".repeat(numOfSpToFillBtw)).concat(content2).concat(" ".repeat(numOfSpToFillEnd)).concat("*\n");
     }
 
+    /**
+     * Generate header section of the cart view
+     *
+     * This function generates header section of the cart view.  The header section includes:
+     *  - store number
+     *  - store address
+     *  - phone number of the store
+     *  - current date and time of when the cart view is generated
+     *  - store name
+     *
+     * @param   cartBorder  top border
+     * @return              the formatted header section
+     */
     private String generateHeaderSection(String cartBorder) {
         String header = "";
         int cartBorderLen = cartBorder.length()-1;  // due to "\n" from user input, recalculate cartBorder length
@@ -72,6 +125,22 @@ public class CartView {
         return header;
     }
 
+    /**
+     * Generate body section of the cart view
+     *
+     * This function generates body section of the cart view.  The body section includes:
+     *  - accumulated quantity of Fries, Drinks, and/or Milkshake Mix-ins item
+     *  - default quantity (i.e. 1) of Burgers, Dogs, and/or Sandwiches item
+     *  - food name
+     *  - default food price
+     *  - total price per total quantity of each food item
+     *  - subtotal amount
+     *  - sales tax amount
+     *  - total amount
+     *
+     * @param   currentCart     hold the accumulated quantity of each food item that the customer orders.
+     * @return                  the formatted body section
+     */
     private String generateBodySection(List<CartForm> currentCart) {
         String body = "";
 
@@ -111,6 +180,18 @@ public class CartView {
         return body;
     }
 
+    /**
+     * Generate footer section of the cart view
+     *
+     * This function generates footer section of the cart view.  The footer section includes:
+     *  - subtotal amount
+     *  - sales tax amount
+     *  - total amount
+     *
+     * @param   cartBorder  top border
+     * @param   cart        cart object
+     * @return              the formatted footer section
+     */
     private String generateFooterSection(String cartBorder, Cart cart) {
         String footer = "";
 
@@ -138,7 +219,15 @@ public class CartView {
         return footer;
     }
 
-    public void printItemView(List<CartForm> currentCart, Cart cart) {
+    /**
+     * Print out the entire cart view
+     *
+     * This function prints out the entire cart view, which composes of the header section, body section, and footer section
+     *
+     * @param   currentCart     hold the accumulated quantity of each food item that the customer orders.
+     * @param   cart            cart object
+     */
+    private void printCartView(List<CartForm> currentCart, Cart cart) {
         String view = "";
         String cartBorder = "*".repeat(borderLen);
         String divider = "*"

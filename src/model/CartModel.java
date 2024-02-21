@@ -1,5 +1,13 @@
 package model;
 
+/**
+ * This class is responsible for interacting with the database by retrieving and updating data per request from
+ * ServerController.
+ *
+ * @author Kevin Yuen
+ * @lastUpdatedDate 2/19/2024
+ */
+
 import component.Food;
 import service.Database;
 
@@ -11,6 +19,24 @@ public class CartModel {
         this.db = db;
     }
 
+    /**
+     * Request DB to update the current remaining quantity of the food
+     *
+     * This function requests DB to perform the followings::
+     * 1. whether such food exists in foodorder.food and
+     * 2. whether the matching food item has sufficient remaining quantity (i.e. at the same quantity as the customer
+     * order)
+     *
+     * If both conditions are met, the current remaining quantity will be re-calculated by subtracting the order
+     * quantity from the current remaining quantity.
+     *
+     * If the second condition fails, the current remaining quantity will be returned.
+     *
+     * @param   itemName    name of the item category where the food is being ordered by the customer
+     * @param   foodName    name of the food that the customer orders
+     * @param   reqQty      order quantity that customer requests for
+     * @return              the latest remaining quantity along with food name, price, max. quantity, and item category name
+     */
     public HashMap<String, Food> sendDBRequestToUpdateRemainQty(String itemName, String foodName, int reqQty) {
         Food updatedFoodDets;
         HashMap<String, Food> foodDetsWithUpdatedRemainQty = new HashMap<>();

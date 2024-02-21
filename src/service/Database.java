@@ -84,6 +84,20 @@ public class Database {
         return menuItems;
     }
 
+    /**
+     * Create new food under the specified item category
+     *
+     * This function creates a new food item if the food does not already exist in DB.  The food's name, price, remaining
+     * quantity, max. quantity, and corresponding item ID will be created upon the update execution.
+     *
+     * An empty food object will be returned if the food is already exist under the specified item category in DB.
+     *
+     * @param       sql     insert a new food item which includes name, price, remaining quantity, max. quantity, and item id
+     * @param   newFoodName the new food name based on user's input
+     * @return              possible returns:
+     *                          the details of the new food item that is being created
+     *                          empty food object
+     */
     public Food createNewFood(String sql, String newFoodName) {
         Food newFood = new Food();
         String query = String.format("SELECT name AS foodName, " +
@@ -129,7 +143,7 @@ public class Database {
      *                                  foodorder.food.maxQty
      *
      * @param       sql             update food price of the specific food under the specific item category
-     * @param       foodName        the given food name whose food price is being updated
+     * @param       foodName        the given food name which the food price needs to be updated
      * @return                      the most updated food details along with the name of its item category
      */
     public HashMap<String, Food> updateFoodDets(String sql, String foodName) {

@@ -72,7 +72,7 @@ public class MenuModel {
      *                                      the new max. quantity and updated remaining quantity along with its other food details
      *                                      empty HashMap object
      */
-    public HashMap<String, Food> sendDBRequestToUpdateFoodDetails(String itemName, String foodName,
+    public HashMap<String, Food> sendDBRequestToUpdateFoodDets(String itemName, String foodName,
                                                                              Double requestedPrice,
                                                                              Integer requestedMaxQty) {
         HashMap<String, Food> dbResponse = new HashMap<>();
@@ -138,12 +138,16 @@ public class MenuModel {
     }
 
     /**
+     * Request DB to calculate remaining quantity of the food
      *
-     * @param itemName
-     * @param foodName
-     * @param currentMaxQty
-     * @param requestedMaxQty
-     * @return
+     * This function requests DB to update the remaining quantity of the food by adding the current remaining quantity
+     * to the difference between the new max. quantity and current max quantity.
+     *
+     * @param   itemName        the item category of the food which the max. quantity needs to be updated
+     * @param   foodName        the name of the food which the max. quantity needs to be updated
+     * @param   currentMaxQty   the current max. quantity of the food
+     * @param   requestedMaxQty the max. quantity to be recorded for the given food name
+     * @return                  the food object with the latest remaining quantity and its item category
      */
     private HashMap<String, Food> sendDBRequestToCalculateRemainQty(String itemName, String foodName, int currentMaxQty,
                                                            int requestedMaxQty) {
@@ -157,6 +161,23 @@ public class MenuModel {
         return updatedRemainQty;
     }
 
+    /**
+     * Request DB to create a new food record
+     *
+     * This function requests DB to create a new food record by inserting all the mandatory details into foodorder.food.
+     * Mandatory details:
+     *      foodorder.name (foodName)
+     *      foodorder.itemId
+     *      foodorder.price
+     *      foodorder.remainQty
+     *      foodorder.maxQty
+     *
+     * @param   itemName    the name of the item category based on user's selected item category where he wants to create a new food under
+     * @param   foodName    the name of the new food to be recorded in the DB
+     * @param   price       the price of the new food to be recorded in the DB
+     * @param   maxQty      the max. quantity of the new food to be recorded in the DB
+     * @return              the details of the new food that is being created along with its item category id
+     */
     public HashMap<String, Food> sendDBRequestToCreateNewFood(String itemName, String foodName, double price, int maxQty) {
         HashMap<String, Food> newFoodHashMap = new HashMap<>();
         Food newFood = db.createNewFood(String.format("INSERT INTO foodorder.food (" +

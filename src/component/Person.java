@@ -24,6 +24,14 @@ public class Person {
         this.name = name;
     }
 
+    /**
+     * Send user request to serverController to render Menu view
+     *
+     * This function forwards user request to serverController to render Menu View.
+     *
+     * @param   foodHashMap         the global variable, menuHashMap, which contains the latest food details
+     * @param   serverController    serverController object
+     */
     public void viewMenu(Map<String, HashMap<String, List<Food>>> foodHashMap, ServerController serverController) {
         serverController.renderMenuView(foodHashMap);
     }
@@ -34,7 +42,7 @@ public class Person {
      * This function requests user to enter the name of the food which he wants to perform operation on and reformat
      * user's input, so the format of given input value will be standardized in the DB.
      *
-     * @return      the food name that user enters
+     * @return the food name that user enters
      */
     public String requestUserFood() {
         String tmpFoodName;
@@ -60,6 +68,13 @@ public class Person {
         return foodName;
     }
 
+    /**
+     * Return the default name of the person.
+     *
+     * This function returns the person's default name, and it is only called by its child class, Admin.
+     *
+     * @return the default name of the person
+     */
     public String getName() {
         return this.name;
     }

@@ -78,6 +78,20 @@ public class General {
         return itemCde;
     }
 
+    /**
+     * Create unique key for each topping name
+     *
+     * This function creates a unique key for each topping name. Customer can order a topping by entering the unique
+     * identifier of the desired topping.  A unique key is defined by the initial letter of the topping name.  If
+     * the topping name is composed of 2 words, a unique key is defined by the initial letter of each word.
+     *
+     * Example:
+     *  topping name = Mustard >>> unique key of Mustard = m
+     *  topping name = Grilled Mushroom >>> unique key of Grilled Mushroom = gm
+     *
+     * @param   toppingNames    topping name in the global variable, menuHashMap
+     * @return                  the unique key of each topping name and the topping name
+     */
     public static HashMap<String, String> composeToppingNameCharMapping(List<String> toppingNames) {
         HashMap<String, String> nameCharMapping = new HashMap<>();
 
