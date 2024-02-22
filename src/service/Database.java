@@ -14,21 +14,46 @@ import java.sql.*;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.io.FileReader;
+import java.util.Properties;
 
 public class Database {
+    private String loginUsername;
+    private String loginPassword;
     private Connection con;
     private Statement statement;
     private PreparedStatement preparedStatement;
 
     /**
-     * This function sets up connectivity between MySQL server and the system.
+     * This function sets up FileReader object and points to the "dbconfig" file and reads the db login info from the
+     * file.
+     */
+    private void readDBLoginAcct() {
+        try {
+            FileReader reader = new FileReader("dbconfig");
+            Properties properties = new Properties();
+
+            properties.load(reader);
+
+            loginUsername = properties.getProperty("username");
+            loginPassword = properties.getProperty("password");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * This function sets up connectivity between MySQL server and the system. DB login username and password are not
+     * included in food-ordering-app repo as the information is sensitive.
      */
     public void createDBConnection() {
         try {
+            readDBLoginAcct();
             Class.forName("com.mysql.cj.jdbc.Driver");     // driver for mysql
             this.con = DriverManager.getConnection(
                     // url = "jdbc:[db]://[ip address]:[port]/[db schema]"
-                    "jdbc:mysql://localhost:3306/foodorder", "root", "Nightfall44");
+                    "jdbc:mysql://localhost:3306/foodorder", loginUsername, loginPassword);
         } catch (ClassNotFoundException | SQLException e) {
             Logger.getLogger(Database.class.getName()).log(Level.SEVERE, e.getMessage(), e);
         }
