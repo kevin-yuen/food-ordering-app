@@ -1,5 +1,12 @@
 package component;
 
+/**
+ * This class contains attributes of each food item.
+ *
+ * @author Kevin Yuen
+ * @lastUpdatedDate 2/19/2024
+ */
+
 public class Food {
     private String itemName = null;
     private String foodName = null;

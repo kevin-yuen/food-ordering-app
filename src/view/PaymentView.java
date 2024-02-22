@@ -16,8 +16,6 @@ public class PaymentView {
     public PaymentView() {}
 
     /**
-     * Print out payment view to the customer.
-     *
      * This function verifies the payment input against the total amount and prints out the corresponding payment view
      * to the customer.
      *

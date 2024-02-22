@@ -1,8 +1,8 @@
 package component;
 
 /**
- * This class is the parent class of Admin class and Customer class.  It holds common attributes and functions used by
- * the Admin class and Customer class.
+ * This class is the parent class of Admin class and Customer class.  It contains common attributes and functions used by
+ * Admin class and Customer class.
  * Common attribute     name
  * Common functions     viewMenu()
  *                      requestUserFood()
@@ -25,20 +25,16 @@ public class Person {
     }
 
     /**
-     * Send user request to serverController to render Menu view
-     *
      * This function forwards user request to serverController to render Menu View.
      *
-     * @param   foodHashMap         the global variable, menuHashMap, which contains the latest food details
-     * @param   serverController    serverController object
+     * @param foodHashMap       the global variable, menuHashMap, which contains the latest food details
+     * @param serverController  serverController object
      */
     public void viewMenu(Map<String, HashMap<String, List<Food>>> foodHashMap, ServerController serverController) {
         serverController.renderMenuView(foodHashMap);
     }
 
     /**
-     * Request user to provide the food name which he wants to perform operation on.
-     *
      * This function requests user to enter the name of the food which he wants to perform operation on and reformat
      * user's input, so the format of given input value will be standardized in the DB.
      *
@@ -69,8 +65,6 @@ public class Person {
     }
 
     /**
-     * Return the default name of the person.
-     *
      * This function returns the person's default name, and it is only called by its child class, Admin.
      *
      * @return the default name of the person

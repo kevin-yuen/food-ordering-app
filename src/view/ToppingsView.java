@@ -18,13 +18,11 @@ public class ToppingsView {
     public ToppingsView() {}
 
     /**
-     * Style the available topping options
-     *
      * This class styles the available topping options. The initial letter will be bold. If there are 2 topping names
      * begin with the same initial letter, the first 2 letters of the second topping option in the list will be bold
      * instead.
      *
-     * @return  the list of styled topping names
+     * @return the list of styled topping names
      */
     public String printToppingsView() {
         HashMap<String, List<Food>> toppings = Global.getMenuHashMap().get("Toppings");

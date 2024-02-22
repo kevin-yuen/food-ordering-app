@@ -1,7 +1,7 @@
 package service;
 
 /**
- * This class ensures that the global variable, menuHashMap, is up-to-date. Ad-hoc request of viewing the entire food
+ * This class ensures that the global variable, menuHashMap, is up-to-date. Any ad-hoc request of viewing the entire food
  * menu will directly extract the food item data from menuHashMap.
  *
  * @author Kevin Yuen
@@ -18,12 +18,10 @@ public class Global {
     public Global() {};
 
     /**
-     * Synchronize the global variable, menuHashMap
-     *
      * This function ensures that the global variable, menuHashMap, retains the most updated food details data
      * after DB update.
      *
-     * @param   dbResponse  the most updated details of the food retrieved from DB
+     * @param dbResponse    the most updated details of the food retrieved from DB
      */
     public static void syncMenuHashMap(HashMap<String, Food> dbResponse) {
         String itemName = dbResponse.keySet().iterator().next().toString(),
@@ -52,23 +50,19 @@ public class Global {
     }
 
     /**
-     * Update the global variable, menuHashMap
-     *
      * This function updates the global variable, menuHashMap, after initial data retrieval from MySQL server before
      * the program continues.
      *
-     * @param   latestMenuItems     the most updated details of the food retrieved from DB
+     * @param latestMenuItems   the most updated details of the food retrieved from DB
      */
     public static void setMenuHashMap(Map<String, HashMap<String, List<Food>>> latestMenuItems) {
         menuHashMap = latestMenuItems;
     }
 
     /**
-     * Retrieve the global variable, menuHashMap
-     *
      * This function retrieves the global variable, menuHashMap.
      *
-     * @return      the latest food item list
+     * @return the latest food item list
      */
     public static Map<String, HashMap<String, List<Food>>> getMenuHashMap() {
         return menuHashMap;

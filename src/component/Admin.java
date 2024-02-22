@@ -1,7 +1,7 @@
 package component;
 
 /**
- * This class holds the specific functions that an admin can perform in the system.
+ * This class contains functions that an admin can perform in the system.
  *
  * @author Kevin Yuen
  * @lastUpdatedDate 2/19/2024
@@ -18,12 +18,10 @@ public class Admin extends Person {
     }
 
     /**
-     * Capture the food name and its new price
-     *
-     * This function captures the name of the food which user wants to perform operation on and the new price of the
+     * This function captures the food name which user wants to perform operation on and the new price of the
      * given food name.
      *
-     * @return  the food name and its new price
+     * @return the food name and its new price
      */
     public HashMap<String, Double> updateFoodPrice() {
         String foodName = requestUserFood();
@@ -35,12 +33,13 @@ public class Admin extends Person {
     }
 
     /**
-     * Add new food under the specified item category
+     * This function allows user add a new food item under the specified item category by requesting user to provide
+     * the followings and compiling those details in the form of Array of Objects.
+     * - a new food name
+     * - the price of the new food and
+     * - the max. quantity of the new food
      *
-     * This function requests user to provide a new food name, the price of the new food, and the max. quantity
-     * of the new food and compiles the given details in Array of Objects.
-     *
-     * @return  the food details (i.e. new food name, price, max. qty) in the form of Array of Objects.
+     * @return the food details (i.e. new food name, price, max. qty) in the form of Array of Objects.
      */
     public Object[] addFood() {
         String foodName = requestUserFood();
@@ -52,11 +51,9 @@ public class Admin extends Person {
     }
 
     /**
-     * Update max. quantity of the food under the specified item category
+     * This function requests user provide the name of an existing food and a new, valid max. quantity of the food.
      *
-     * This function requests user to provide the food name and a new, valid max. quantity of the food.
-     *
-     * @return  the food name and the new max. quantity to be updated to
+     * @return the food name and the new max. quantity to be updated to
      */
     public HashMap<String, Integer> updateFoodMaxQty() {
         String foodName = requestUserFood();
@@ -68,11 +65,9 @@ public class Admin extends Person {
     }
 
     /**
-     * Request user to provide a new price of the food which he wants to perform operation on.
+     * This function requests user provide a new, valid price of the food which he wants to perform operation on.
      *
-     * This function requests user to provide a new, valid price of the food which he wants to perform operation on.
-     *
-     * @return  the new food price that user provides
+     * @return the new food price that user provides
      */
     private double getRequestedPrice() {
         double foodPrice = 0.0d;
@@ -97,12 +92,9 @@ public class Admin extends Person {
     }
 
     /**
-     * Request user to provide a max. quantity of the food which he wants to perform operation on.
+     * This function requests user provide a new, valid max. quantity of the food which he wants to perform operation on.
      *
-     * This function requests user to provide a new, valid max. quantity of the food which he wants to perform
-     * operation on.
-     *
-     * @return  the new max. quantity
+     * @return the new max. quantity
      */
     private int getRequestedMaxQty() {
         int foodMaxQty = 0;

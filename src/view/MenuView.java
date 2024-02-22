@@ -1,5 +1,12 @@
 package view;
 
+/**
+ * This class is responsible for creating menu layout and printing out the menu.
+ *
+ * @author Kevin Yuen
+ * @lastUpdatedDate 2/19/2024
+ */
+
 import component.Food;
 import general.General;
 
@@ -10,6 +17,11 @@ import java.util.Map;
 public class MenuView {
     public MenuView() {}
 
+    /**
+     * This function creates menu layout and prints out the menu view that includes the details of each food item.
+     *
+     * @param   foodHashMap     the latest list of food details
+     */
     public void printMenuView(Map<String, HashMap<String, List<Food>>> foodHashMap) {
         String border = "-".repeat(101), menu = border.concat("\n"), tmpMenu = "";
         String menuEntryStarterFormat = "|".concat(" ".repeat(3));

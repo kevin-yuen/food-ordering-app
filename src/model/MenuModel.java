@@ -21,8 +21,6 @@ public class MenuModel {
     }
 
     /**
-     * Request DB to retrieve the latest details of each food from foodorder.food
-     *
      * This function requests DB to retrieve the latest details of each food from foodorder.food in MySQL server
      *
      * @return the list of details of each food
@@ -45,13 +43,11 @@ public class MenuModel {
     }
 
     /**
-     * Request DB to update food price or max. quantity of the food
-     *
-     * This function requests DB to update the price of the given food if the user request is to update the food price
-     * or update the max. quantity of the given food if the user request is to update the max. quantity.  Either
+     * This function requests DB to update the price of the given food if user request is to update the food price
+     * or update the max. quantity of the given food if user request is to update the max. quantity. Either
      * food price or max. quantity will be passed as argument to perform the update.
      *
-     * To update the max. quantity, DB will be asked to check for the current max. quantity of the food, and the update
+     * To update max. quantity, DB will be asked to check for the current max. quantity of the food, and the update
      * will only be executed if the max. quantity request is greater than the current max. quantity.
      *
      * Upon max. quantity update completion, remaining quantity will be re-calculated based on the updated max. quantity.
@@ -63,14 +59,14 @@ public class MenuModel {
      * maxQty       100     ---<<updated to 200>>------->      maxQty       200
      * remainQty    50      ---<<incremented by 100>>--->      remainQty    150
      *
-     * @param       itemName            the option number of user's selected item
-     * @param       foodName            the food name per user input
-     * @param       requestedPrice      the new food price which user requests to update to
-     * @param       requestedMaxQty     the new max. quantity which user requests to update to
-     * @return                          possible returns:
-     *                                      the new food price along with its other food details
-     *                                      the new max. quantity and updated remaining quantity along with its other food details
-     *                                      empty HashMap object
+     * @param itemName          the option number of user's selected item
+     * @param foodName          the food name per user input
+     * @param requestedPrice    the new food price which user requests to update to
+     * @param requestedMaxQty   the new max. quantity which user requests to update to
+     * @return                  possible returns:
+     *                            the new food price along with its other food details
+     *                            the new max. quantity and updated remaining quantity along with its other food details
+     *                            empty HashMap object
      */
     public HashMap<String, Food> sendDBRequestToUpdateFoodDets(String itemName, String foodName,
                                                                              Double requestedPrice,
@@ -138,8 +134,6 @@ public class MenuModel {
     }
 
     /**
-     * Request DB to calculate remaining quantity of the food
-     *
      * This function requests DB to update the remaining quantity of the food by adding the current remaining quantity
      * to the difference between the new max. quantity and current max quantity.
      *
@@ -162,8 +156,6 @@ public class MenuModel {
     }
 
     /**
-     * Request DB to create a new food record
-     *
      * This function requests DB to create a new food record by inserting all the mandatory details into foodorder.food.
      * Mandatory details:
      *      foodorder.name (foodName)

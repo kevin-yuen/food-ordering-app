@@ -25,12 +25,10 @@ public class CartView {
     public CartView() {}
 
     /**
-     * Determine the final cart view to display to the customer
-     *
      * This function determines which cart view to display to the customer.
      *
-     * @param   currentCart     hold the accumulated quantity of each food item that the customer orders.
-     * @param   cart            cart object
+     * @param currentCart   hold the accumulated quantity of each food item that the customer orders.
+     * @param cart          cart object
      */
     public void determineCartView(List<CartForm> currentCart, Cart cart) {
         if (currentCart.size() == 0) {
@@ -41,10 +39,7 @@ public class CartView {
     }
 
     /**
-     * Print out no item view
-     *
      * This function prints out no item view if no item is found in cart.
-     *
      */
     private void printNoItemInCartView() {
         System.out.println("No item in cart.");
@@ -66,8 +61,6 @@ public class CartView {
     }
 
     /**
-     * Format the cart
-     *
      * This function formats the line that has 2 contents in the cart view.
      *
      * @param   content1            the content on the left-hand side of the cart view
@@ -84,9 +77,7 @@ public class CartView {
     }
 
     /**
-     * Generate header section of the cart view
-     *
-     * This function generates header section of the cart view.  The header section includes:
+     * This function generates header section of the cart view. The header section includes:
      *  - store number
      *  - store address
      *  - phone number of the store
@@ -126,9 +117,7 @@ public class CartView {
     }
 
     /**
-     * Generate body section of the cart view
-     *
-     * This function generates body section of the cart view.  The body section includes:
+     * This function generates body section of the cart view. The body section includes:
      *  - accumulated quantity of Fries, Drinks, and/or Milkshake Mix-ins item
      *  - default quantity (i.e. 1) of Burgers, Dogs, and/or Sandwiches item
      *  - food name
@@ -183,7 +172,7 @@ public class CartView {
     /**
      * Generate footer section of the cart view
      *
-     * This function generates footer section of the cart view.  The footer section includes:
+     * This function generates footer section of the cart view. The footer section includes:
      *  - subtotal amount
      *  - sales tax amount
      *  - total amount

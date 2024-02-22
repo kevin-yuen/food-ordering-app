@@ -1,7 +1,7 @@
 package component;
 
 /**
- * This class holds the specific functions that a customer can perform in the system.
+ * This class contains the specific functions that a customer can perform in the system.
  *
  * @author Kevin Yuen
  * @lastUpdatedDate 2/19/2024
@@ -21,24 +21,22 @@ public class Customer extends Person {
     }
 
     /**
-     * Capture the details of the food that the customer orders and the order request details
+     * This function captures the details of the food that the customer orders and the order quantity. Food details
+     * include food name, item category name, and food price.
      *
-     * This function captures the details of the food that the customer orders and the quantity that is being ordered.
-     * Food details include food name, item category name, and food price.
-     *
-     * Prior to order fulfillment (i.e. the order is added to cart), the current remaining quantity of the food will
+     * Prior to order fulfillment (i.e. order is added to cart), the current remaining quantity of the food will
      * be checked to ensure that there is sufficient quantity to fulfillment the order request.
      *
-     * If customer orders Burgers, Dogs, or Sandwiches food item, he will optionally be asked to enter one or more
+     * If customer orders Burgers, Dogs, or Sandwiches item, he will optionally be asked to enter one or more
      * Toppings items, and the current remaining quantity of the selected Topping item(s) will be checked as well
      * before capturing the name and price of the selected topping(s).
      *
-     * CartForm object will then be created with the details of the food that the customer orders and the order
-     * request details.  The global variable, menuHashMap, will also be updated according to the latest details of the
-     * food retrieved from DB.
+     * CartForm object will then be created with the details of the food that the customer orders and the order details.
+     * The global variable, menuHashMap, will also be updated according to the latest details of the food retrieved from
+     * DB.
      *
-     * @param   serverController    serverController object
-     * @param   cartForm            the details of the food that the customer orders and the order request details
+     * @param serverController  serverController object
+     * @param cartForm          details of the food that customer orders and the order details
      */
     public void createCartForm(ServerController serverController, CartForm cartForm) {
         String itemName = cartForm.getItemType(), foodNameRequest = cartForm.getFoodName();
@@ -75,12 +73,10 @@ public class Customer extends Person {
     }
 
     /**
-     * Request user to provide the quantity of the food which he wants to order
+     * This function requests user enter a valid order quantity of the food. "Valid" means that the quantity must be
+     * at least 1.
      *
-     * This function requests user to enter a valid quantity of the food which he wants to order. "Valid" means
-     * that the quantity must be at least 1.
-     *
-     * @return the quantity of the food which he wants to order
+     * @return the order quantity of the food
      */
     public int requestQuantity() {
         int orderedQuantity = 0;
@@ -101,26 +97,24 @@ public class Customer extends Person {
     }
 
     /**
-     * Request customer to enter desired topping(s) for Burgers, Dogs, and Sandwiches order
-     *
      * This function asks customer whether he wishes to add any topping(s) to the Burgers, Dogs, or Sandwiches food item.
-     * If the customer wishes to proceed with toppings add-on, he will be asked to enter topping name(s).  If the
+     * If the customer wishes to proceed with toppings add-on, he will be asked to enter topping name(s). If the
      * customer doesn't wish to proceed, the ordering process will be complete.
      *
-     * The user input of the topping item option is mapped with the toppings stored in the global variable, menuHashMap,
+     * The given topping item option will be mapped with the toppings stored in the global variable, menuHashMap,
      * using one of the following mapping methods:
      * - if user provides numeric input, the system will find the corresponding topping name by subtracting input
      * number by 1 to find the index position of the topping in the Toppings list.
      *      Example:
      *          numeric input       Toppings list           search result
-     *               1         [Mayo, Lettuce, Pickle]         Lettuce
-     * - if user provides alphabetical input, the system will match for the topping with the given input in the Toppings
-     * list.
+     *               2         [Mayo, Lettuce, Pickle]         Lettuce
+     * - if user provides alphabetical input, the system will match for the topping with the given input by mapping with
+     * the topping's unique key for the topping (refer to General.composeToppingNameCharMapping()).
      *      Example:
      *        alphabetical input    Toppings list           search result
      *              l         [Mayo, Lettuce, Pickle]         Lettuce
      *
-     * Once the toppings are provided, ToppingSelectionResult view will be rendered to print out the result of adding
+     * Once toppings are provided, ToppingSelectionResult view will be rendered to print out the result of adding
      * topping(s) to the Burgers, Dogs, or Sandwiches food item.
      *
      * @param   serverController    serverController object
@@ -201,11 +195,9 @@ public class Customer extends Person {
     }
 
     /**
-     * Capture the payment amount entered by the customer
-     *
      * This function captures the payment amount entered by the customer.
      *
-     * @return  the payment amount entered by the customer
+     * @return the payment amount entered by the customer
      */
     public String makePayment() {
         return scanner.nextLine();

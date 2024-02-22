@@ -15,8 +15,6 @@ public class General {
     public General() {}
 
     /**
-     * Create border around the system name
-     *
      * This function creates border around the system name and prints out the border and the system name.
      */
     public static void drawBoard() {
@@ -38,6 +36,18 @@ public class General {
         }
     }
 
+    /**
+     * Calculate the number of spaces to be added after each food content
+     *
+     * This function calculates the number of spaces to be added right after the food content. To align the border
+     * of each column, the number of spaces is calculated by using the following formula:
+     *      (the sum of the length of the longest content and the extra spaces added) - (the length of the current content)
+     *
+     * @param   value               current content
+     * @param   maxLenOfAllValues   the length of the longest content
+     * @param   totalLen            the sum of the length of the longest content and the extra spaces being added
+     * @return                      the current content and the number of spaces added
+     */
     public static String calculateExtraSpaceToAdd(String value, int maxLenOfAllValues, int totalLen) {
         String refomattedValue = null;
 
@@ -48,8 +58,6 @@ public class General {
     }
 
     /**
-    * Verify user's input on food item selection
-    *
     * This function verifies user's input on food item selection and if an alphabetical input is provided, it will
     * convert the input to the corresponding item option number.
     *
@@ -79,18 +87,16 @@ public class General {
     }
 
     /**
-     * Create unique key for each topping name
-     *
      * This function creates a unique key for each topping name. Customer can order a topping by entering the unique
-     * identifier of the desired topping.  A unique key is defined by the initial letter of the topping name.  If
+     * identifier for the desired topping.  A unique key is defined by the initial letter of the topping name.  If
      * the topping name is composed of 2 words, a unique key is defined by the initial letter of each word.
      *
      * Example:
-     *  topping name = Mustard >>> unique key of Mustard = m
-     *  topping name = Grilled Mushroom >>> unique key of Grilled Mushroom = gm
+     *  topping name = Mustard >>> the unique identifier of Mustard = m
+     *  topping name = Grilled Mushroom >>> the unique identifier of Grilled Mushroom = gm
      *
      * @param   toppingNames    topping name in the global variable, menuHashMap
-     * @return                  the unique key of each topping name and the topping name
+     * @return                  the unique identifier of each topping name and the topping name
      */
     public static HashMap<String, String> composeToppingNameCharMapping(List<String> toppingNames) {
         HashMap<String, String> nameCharMapping = new HashMap<>();
@@ -114,8 +120,6 @@ public class General {
     }
 
     /**
-     * Capture user's selected option
-     *
      * This function captures user's selected option throughout the program (for example, Operation menu).
      */
     public static void setRequestedSysOpt() {
@@ -124,8 +128,6 @@ public class General {
     }
 
     /**
-     * Retrieve user's selected option
-     *
      * This function retrieves user's selected option throughout the program (for example, Operation menu).
      */
     public static String getRequestedSysOpt() {

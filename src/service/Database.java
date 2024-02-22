@@ -21,8 +21,6 @@ public class Database {
     private PreparedStatement preparedStatement;
 
     /**
-     * Set up DB connection
-     *
      * This function sets up connectivity between MySQL server and the system.
      */
     public void createDBConnection() {
@@ -36,6 +34,16 @@ public class Database {
         }
     }
 
+    /**
+     * This function retrieves the latest details of each food item stored in foodorder.food whenever it is called.
+     * Since the food items are stored in ascending order based on the latest creation datetime in foodorder.food table,
+     * and each food item will be stored as HashMap (e.g. {Burgers={Hamburger, [8.99, 93, 100]}}, it is mandatory to
+     * check the item category name of every food record before adding to the HashMap variable.
+     *
+     * @param   sql     to retrieve the latest details of each food item
+     * @param   column  the specified column names to look for from the DB result
+     * @return          the latest details of each food item stored in foodorder.food
+     */
     public Map<String, HashMap<String, List<Food>>> queryLatestMenuItemsDets(String sql, String... column) {
         Map<String, HashMap<String, List<Food>>> menuItems = new HashMap<>();
         HashMap<String, List<Food>> foodNameAndDets = new HashMap<>();
@@ -85,15 +93,13 @@ public class Database {
     }
 
     /**
-     * Create new food under the specified item category
-     *
-     * This function creates a new food item if the food does not already exist in DB.  The food's name, price, remaining
+     * This function creates a new food item if the food does not already exist in DB. The food's name, price, remaining
      * quantity, max. quantity, and corresponding item ID will be created upon the update execution.
      *
      * An empty food object will be returned if the food is already exist under the specified item category in DB.
      *
-     * @param       sql     insert a new food item which includes name, price, remaining quantity, max. quantity, and item id
-     * @param   newFoodName the new food name based on user's input
+     * @param  sql          insert a new food item which includes name, price, remaining quantity, max. quantity, and item id
+     * @param  newFoodName  the new food name based on user's input
      * @return              possible returns:
      *                          the details of the new food item that is being created
      *                          empty food object
@@ -134,17 +140,15 @@ public class Database {
     }
 
     /**
-     * Update detail of the food in DB and retrieve the most updated details of the food from DB
-     *
-     * This function updates detail of the given food name in DB and retrieves the most updated details of the food
+     * This function updates details of the given food name in DB and retrieves the most updated details of the food
      * from DB after DB update.
      * Possible field value updates:    foodorder.food.price
      *                                  foodorder.food.remainQty
      *                                  foodorder.food.maxQty
      *
-     * @param       sql             update food price of the specific food under the specific item category
-     * @param       foodName        the given food name which the food price needs to be updated
-     * @return                      the most updated food details along with the name of its item category
+     * @param   sql         update food price of the specific food under the specific item category
+     * @param   foodName    the given food name which the food price needs to be updated
+     * @return              the most updated food details along with the name of its item category
      */
     public HashMap<String, Food> updateFoodDets(String sql, String foodName) {
         HashMap<String, Food> latestFoodDets = new HashMap<>();
@@ -170,22 +174,20 @@ public class Database {
     }
 
     /**
-     * Retrieve the latest food details of a particular food
-     *
      * This function retrieves the latest food details of a particular food from DB based on the given food name and
-     * if the food name is found under the specific item category, a new Food object will be created along with its
+     * if the food name is found under the specified item category, a new Food object will be created along with its
      * item name based on the latest details from DB; otherwise, a new Food object will be created without item name.
      *
-     * @param       sql         look up a specific food record from foodorder.food
-     * @param       columns     foodorder.item.name
-     *                          foodorder.food.name
-     *                          foodorder.food.price
-     *                          foodorder.food.remainQty
-     *                          foodorder.food.maxQty
-     * @return                  possible returns:
-     *                              food object with its item name
-     *                              food object without item name
-     *                              empty food object
+     * @param   sql         look up a specific food record from foodorder.food
+     * @param   columns     foodorder.item.name
+     *                      foodorder.food.name
+     *                      foodorder.food.price
+     *                      foodorder.food.remainQty
+     *                      foodorder.food.maxQty
+     * @return              possible returns:
+     *                          food object with its item name
+     *                          food object without item name
+     *                          empty food object
      */
     public Food executeReadOp(String sql, String... columns) {
         Food food = new Food();
@@ -225,15 +227,13 @@ public class Database {
     }
 
     /**
-     * Execute DB update on food record
-     *
-     * This function executes update on food detail(s) in DB.
+     * This function executes update operation on food detail(s) in DB.
      * Possible field value updates:    foodorder.food.price
      *                                  foodorder.food.remainQty
      *                                  foodorder.food.maxQty
      *
-     * @param       sql     update food price of the specific food under the specific item category
-     * @return              count of updated rows
+     * @param   sql     update food price of the specific food under the specific item category
+     * @return          count of updated rows
      */
     private int executeManipulateOp(String sql) {
         int rowCtn = 0;

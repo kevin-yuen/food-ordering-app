@@ -19,10 +19,7 @@ public class ItemView {
     public ItemView() {}
 
     /**
-     * Compile and format available food item options
-     *
      * This function compiles and styles food item options.
-     *
      *
      * @param   appState        the current operation that user wants to perform
      * @param   menuHashMap     the latest food item list

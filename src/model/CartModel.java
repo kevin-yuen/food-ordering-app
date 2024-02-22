@@ -20,12 +20,9 @@ public class CartModel {
     }
 
     /**
-     * Request DB to update the current remaining quantity of the food
-     *
      * This function requests DB to perform the followings::
      * 1. whether such food exists in foodorder.food and
-     * 2. whether the matching food item has sufficient remaining quantity (i.e. at the same quantity as the customer
-     * order)
+     * 2. whether the matching food item has sufficient remaining quantity
      *
      * If both conditions are met, the current remaining quantity will be re-calculated by subtracting the order
      * quantity from the current remaining quantity.
