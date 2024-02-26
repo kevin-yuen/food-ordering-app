@@ -70,24 +70,29 @@ public class Admin extends Person {
      * @return the new food price that user provides
      */
     private double getRequestedPrice() {
+        boolean isFoodPriceValid = false;
         double foodPrice = 0.0d;
 
-        while (foodPrice <= 0.0) {
+        do {
             System.out.print("Enter food price: ");
 
             try {
                 foodPrice = Double.parseDouble(scanner.nextLine());
+
+                if (foodPrice > 0 && foodPrice < 1000) {
+                    isFoodPriceValid = true;
+                }
+                else if (foodPrice >= 1000) {
+                    System.out.println("What the heck?! The food will be overpriced. " +
+                            "No one is gonna buy it. Please set a more realistic price.");
+                }
+                else {
+                    System.out.println("Set up a valid price so we can make some profit!");
+                }
             } catch (NumberFormatException e) {
                 System.out.println("Please set the price.");
-                continue;
             }
-
-            if (foodPrice <= 0.0) {
-                System.out.println("You haven't set the price yet.");
-                continue;
-            }
-            break;
-        }
+        } while(!isFoodPriceValid);
         return foodPrice;
     }
 
@@ -97,24 +102,26 @@ public class Admin extends Person {
      * @return the new max. quantity
      */
     private int getRequestedMaxQty() {
+        boolean isFoodMaxQtyValid = false;
         int foodMaxQty = 0;
 
-        while (foodMaxQty <= 0) {
+        do {
             System.out.print("Enter max. quantity in stock: ");
 
             try {
                 foodMaxQty = Integer.parseInt(scanner.nextLine());
+
+                if (foodMaxQty >= 1 && foodMaxQty <= 999) {
+                    isFoodMaxQtyValid = true;
+                }
+                else {
+                    System.out.println("Max. quantity can only be within the range of 1-999.");
+                }
+
             } catch (NumberFormatException e) {
                 System.out.println("Please set the max. quantity.");
-                continue;
             }
-
-            if (foodMaxQty <= 0) {
-                System.out.println("You haven't set the max. quantity yet.");
-                continue;
-            }
-            break;
-        }
+        } while (!isFoodMaxQtyValid);
         return foodMaxQty;
     }
 }
