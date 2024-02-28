@@ -7,8 +7,7 @@ package component;
  * @lastUpdatedDate 2/19/2024
  */
 
-import java.util.HashMap;
-import java.util.Scanner;
+import java.util.*;
 
 public class Admin extends Person {
     Scanner scanner = new Scanner(System.in);
@@ -23,7 +22,7 @@ public class Admin extends Person {
      *
      * @return the food name and its new price
      */
-    public HashMap<String, Double> updateFoodPrice() {
+    public HashMap<String, Double> requestFoodPriceUpdate() {
         String foodName = requestUserFood();
         double foodPrice = getRequestedPrice();
         HashMap<String, Double> foodNameAndPrice = new HashMap<>() {
@@ -39,15 +38,16 @@ public class Admin extends Person {
      * - the price of the new food and
      * - the max. quantity of the new food
      *
-     * @return the food details (i.e. new food name, price, max. qty) in the form of Array of Objects.
+     * @return the food details (i.e. new food name, price, max. qty) in the form of List of Generics.
      */
-    public Object[] addFood() {
+
+    public List<?> addFood() {
         String foodName = requestUserFood();
         double price = getRequestedPrice();
         int maxQty = getRequestedMaxQty();
 
-        Object[] foodDetails = {foodName, price, maxQty};
-        return foodDetails;
+        List<?> foodDets = Arrays.asList(foodName, price, maxQty);
+        return foodDets;
     }
 
     /**

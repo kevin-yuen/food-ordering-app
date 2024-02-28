@@ -27,7 +27,6 @@ public class Main {
             String viewRendered = "";
             ArrayList<String> itemList = new ArrayList<>();
 
-            // 1. System asks admin to enter the operation
             while (appState == 0) {
                 System.out.println("Enter the operation you want to perform:" +
                         "\n1. [\u001B[1mU\u001B[0m]pdate menu" +
@@ -86,7 +85,6 @@ public class Main {
             if (appState == 1) {
                 int updateOpItemCde = 0;
 
-                // 2: System asks user to enter the item type to perform operation on
                 while (updateOpItemCde == 0) {
                     System.out.print(viewRendered);
                     General.setRequestedSysOpt();
@@ -122,7 +120,7 @@ public class Main {
                             }
 
                             if (operationCdeOnItem == 1) {
-                                HashMap<String, Double> foodNameAndPrice = admin.updateFoodPrice();
+                                HashMap<String, Double> foodNameAndPrice = admin.requestFoodPriceUpdate();
                                 String foodName = foodNameAndPrice.keySet().toArray()[0].toString();
                                 double foodPrice = foodNameAndPrice.get(foodName);
 
@@ -132,12 +130,11 @@ public class Main {
                                 if (dbResponse.size() > 0) Global.syncMenuHashMap(dbResponse);
                                 operationCdeOnItem = 0;     // reset to perform other operations on the selected item
                             } else if (operationCdeOnItem == 2) {
-                                Object[] foodDetails = admin.addFood();
-                                List<Object> foodDetailsObject = Arrays.asList(foodDetails);
+                                List<?> foodDetails = admin.addFood();
 
-                                String foodName = foodDetailsObject.get(0).toString();
-                                double price = Double.parseDouble(foodDetailsObject.get(1).toString());
-                                int maxQty = Integer.parseInt(foodDetailsObject.get(2).toString());
+                                String foodName = foodDetails.get(0).toString();
+                                double price = Double.parseDouble(foodDetails.get(1).toString());
+                                int maxQty = Integer.parseInt(foodDetails.get(2).toString());
 
                                 HashMap<String, Food> dbResponse = serverController
                                         .notifyMenuModelToCreateFood(itemName, foodName, price, maxQty);

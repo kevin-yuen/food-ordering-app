@@ -18,18 +18,18 @@ public class General {
      * This function creates border around the system name and prints out the border and the system name.
      */
     public static void drawBoard() {
-        String sysName = "FIVE GUYS FOOD ORDERING SYSTEM";
-        int boardLineCounter = 1;
+        String sysName = "Five Guys Food Ordering System";
+        int borderCounter = 1;
 
         while (true) {
-            if (boardLineCounter <= 3) {
-                if (boardLineCounter % 2 != 0) {
+            if (borderCounter <= 3) {
+                if (borderCounter % 2 != 0) {
                     System.out.println("-".repeat(38));
                 } else {
                     System.out.println("|" + " ".repeat(3) + sysName + " ".repeat(3) + "|");
                 }
 
-                boardLineCounter += 1;
+                borderCounter += 1;
             } else {
                 break;
             }

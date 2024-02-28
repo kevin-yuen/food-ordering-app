@@ -6,107 +6,149 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class GeneralTest {
     @Test
-    void selectOption1ShouldEqualToOne() {
-        assertEquals(1, General.verifyItemSelection("1"));
+    void givenSelectedOption_whenOne_thenReturnItemCode1() {
+        String actualItemOptionSelected = "1";
+        int expectedItemOptionReturned = 1;
+        assertEquals(expectedItemOptionReturned, General.verifyItemSelection(actualItemOptionSelected));
     }
 
     @Test
-    void selectOptionNeg1ShouldEqualToZero() {
-        assertEquals(0, General.verifyItemSelection("-1"));
+    void givenSelectedOption_whenNegativeOne_thenReturnItemCode0() {
+        String actualItemOptionSelected = "-1";
+        int expectedItemOptionReturned = 0;
+        assertEquals(expectedItemOptionReturned, General.verifyItemSelection(actualItemOptionSelected));
     }
 
     @Test
-    void selectOption9ShouldEqualToZero() {
-        assertEquals(0, General.verifyItemSelection("9"));
+    void givenSelectedOption_whenNine_thenReturnItemCode0() {
+        String actualItemOptionSelected = "9";
+        int expectedItemOptionReturned = 0;
+        assertEquals(expectedItemOptionReturned, General.verifyItemSelection(actualItemOptionSelected));
     }
 
     @Test
-    void inputUppercaseFShouldEqualToOption1() {
-        assertEquals(1, General.verifyItemSelection("F"));
+    void givenSelectedOption_whenUppercaseF_thenReturnOption1() {
+        String actualItemOptionSelected = "F";
+        int expectedItemOptionReturned = 1;
+        assertEquals(expectedItemOptionReturned, General.verifyItemSelection(actualItemOptionSelected));
     }
 
     @Test
-    void inputUppercaseBShouldEqualToOption2() {
-        assertEquals(2, General.verifyItemSelection("B"));
+    void givenSelectedOption_whenUppercaseB_thenReturnOption2() {
+        String actualItemOptionSelected = "B";
+        int expectedItemOptionReturned = 2;
+        assertEquals(expectedItemOptionReturned, General.verifyItemSelection(actualItemOptionSelected));
     }
 
     @Test
-    void inputUppercaseDShouldEqualToOption3() {
-        assertEquals(3, General.verifyItemSelection("D"));
+    void givenSelectedOption_whenUppercaseD_thenReturnOption3() {
+        String actualItemOptionSelected = "D";
+        int expectedItemOptionReturned = 3;
+        assertEquals(expectedItemOptionReturned, General.verifyItemSelection(actualItemOptionSelected));
     }
 
     @Test
-    void inputUppercaseDRShouldEqualToOption4() {
-        assertEquals(4, General.verifyItemSelection("DR"));
+    void givenSelectedOption_whenUppercaseDR_thenReturnOption4() {
+        String actualItemOptionSelected = "DR";
+        int expectedItemOptionReturned = 4;
+        assertEquals(expectedItemOptionReturned, General.verifyItemSelection(actualItemOptionSelected));
     }
 
     @Test
-    void inputUppercaseMShouldEqualToOption5() {
-        assertEquals(5, General.verifyItemSelection("M"));
+    void givenSelectedOption_whenUppercaseM_thenReturnOption5() {
+        String actualItemOptionSelected = "M";
+        int expectedItemOptionReturned = 5;
+        assertEquals(expectedItemOptionReturned, General.verifyItemSelection(actualItemOptionSelected));
     }
 
     @Test
-    void inputUppercaseSShouldEqualToOption6() {
-        assertEquals(6, General.verifyItemSelection("S"));
+    void givenSelectedOption_whenUppercaseS_thenReturnOption6() {
+        String actualItemOptionSelected = "S";
+        int expectedItemOptionReturned = 6;
+        assertEquals(expectedItemOptionReturned, General.verifyItemSelection(actualItemOptionSelected));
     }
 
     @Test
-    void inputUppercaseTShouldEqualToOption7() {
-        assertEquals(7, General.verifyItemSelection("T"));
+    void givenSelectedOption_whenUppercaseT_thenReturnOption7() {
+        String actualItemOptionSelected = "T";
+        int expectedItemOptionReturned = 7;
+        assertEquals(expectedItemOptionReturned, General.verifyItemSelection(actualItemOptionSelected));
     }
 
     @Test
-    void inputUppercaseBAShouldEqualToOption8() {
-        assertEquals(8, General.verifyItemSelection("BA"));
+    void givenSelectedOption_whenUppercaseBA_thenReturnOption8() {
+        String actualItemOptionSelected = "BA";
+        int expectedItemOptionReturned = 8;
+        assertEquals(expectedItemOptionReturned, General.verifyItemSelection(actualItemOptionSelected));
     }
 
     @Test
-    void inputLowercaseFShouldEqualToOption1() {
-        assertEquals(1, General.verifyItemSelection("f"));
+    void givenSelectedOption_whenUppercaseX_thenReturnOption0() {
+        String actualItemOptionSelected = "X";
+        int expectedItemOptionReturned = 0;
+        assertEquals(expectedItemOptionReturned, General.verifyItemSelection(actualItemOptionSelected));
     }
 
     @Test
-    void inputLowercaseBShouldEqualToOption2() {
-        assertEquals(2, General.verifyItemSelection("b"));
+    void givenSelectedOption_whenLowercaseF_thenReturnOption1() {
+        String actualItemOptionSelected = "f";
+        int expectedItemOptionReturned = 1;
+        assertEquals(expectedItemOptionReturned, General.verifyItemSelection(actualItemOptionSelected));
     }
 
     @Test
-    void inputLowercaseDShouldEqualToOption3() {
-        assertEquals(3, General.verifyItemSelection("d"));
+    void givenSelectedOption_whenLowercaseB_thenReturnOption2() {
+        String actualItemOptionSelected = "b";
+        int expectedItemOptionReturned = 2;
+        assertEquals(expectedItemOptionReturned, General.verifyItemSelection(actualItemOptionSelected));
     }
 
     @Test
-    void inputLowercaseDRShouldEqualToOption4() {
-        assertEquals(4, General.verifyItemSelection("dr"));
+    void givenSelectedOption_whenLowercaseD_thenReturnOption3() {
+        String actualItemOptionSelected = "d";
+        int expectedItemOptionReturned = 3;
+        assertEquals(expectedItemOptionReturned, General.verifyItemSelection(actualItemOptionSelected));
     }
 
     @Test
-    void inputLowercaseMShouldEqualToOption5() {
-        assertEquals(5, General.verifyItemSelection("m"));
+    void givenSelectedOption_whenLowercaseDR_thenReturnOption4() {
+        String actualItemOptionSelected = "dr";
+        int expectedItemOptionReturned = 4;
+        assertEquals(expectedItemOptionReturned, General.verifyItemSelection(actualItemOptionSelected));
     }
 
     @Test
-    void inputLowercaseSShouldEqualToOption6() {
-        assertEquals(6, General.verifyItemSelection("s"));
+    void givenSelectedOption_whenLowercaseM_thenReturnOption5() {
+        String actualItemOptionSelected = "m";
+        int expectedItemOptionReturned = 5;
+        assertEquals(expectedItemOptionReturned, General.verifyItemSelection(actualItemOptionSelected));
     }
 
     @Test
-    void inputLowercaseTShouldEqualToOption7() {
-        assertEquals(7, General.verifyItemSelection("t"));
+    void givenSelectedOption_whenLowercaseS_thenReturnOption6() {
+        String actualItemOptionSelected = "s";
+        int expectedItemOptionReturned = 6;
+        assertEquals(expectedItemOptionReturned, General.verifyItemSelection(actualItemOptionSelected));
     }
 
     @Test
-    void inputLowercaseBAShouldEqualToOption8() {
-        assertEquals(8, General.verifyItemSelection("ba"));
+    void givenSelectedOption_whenLowercaseT_thenReturnOption7() {
+        String actualItemOptionSelected = "t";
+        int expectedItemOptionReturned = 7;
+        assertEquals(expectedItemOptionReturned, General.verifyItemSelection(actualItemOptionSelected));
     }
 
     @Test
-    void inputUppercaseZShouldEqualToOption0() {
-        assertEquals(0, General.verifyItemSelection("Z"));
+    void givenSelectedOption_whenLowercaseBA_thenReturnOption8() {
+        String actualItemOptionSelected = "ba";
+        int expectedItemOptionReturned = 8;
+        assertEquals(expectedItemOptionReturned, General.verifyItemSelection(actualItemOptionSelected));
     }
 
     @Test
-    void inputLowercaseZShouldEqualToOption0() {
-        assertEquals(0, General.verifyItemSelection("z"));
+    void givenSelectedOption_whenLowercaseX_thenReturnOption0() {
+        String actualItemOptionSelected = "x";
+        int expectedItemOptionReturned = 0;
+        assertEquals(expectedItemOptionReturned, General.verifyItemSelection(actualItemOptionSelected));
     }
 }
