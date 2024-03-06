@@ -16,9 +16,7 @@ import java.util.*;
 public class Customer extends Person {
     Scanner scanner = new Scanner(System.in);
 
-    public Customer(String name) {
-        super(name);
-    }
+    public Customer() {}
 
     /**
      * This function captures the details of the food that the customer orders and the order quantity. Food details
@@ -202,4 +200,6 @@ public class Customer extends Person {
     public String makePayment() {
         return scanner.nextLine();
     }
+
+    public String getName() {return "";}
 }

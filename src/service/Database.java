@@ -20,6 +20,7 @@ import java.util.Properties;
 public class Database {
     private String loginUsername;
     private String loginPassword;
+    private String ipAddress;
     private Connection con;
     private Statement statement;
     private PreparedStatement preparedStatement;
@@ -37,6 +38,7 @@ public class Database {
 
             loginUsername = properties.getProperty("username");
             loginPassword = properties.getProperty("password");
+            ipAddress = properties.getProperty("ipAddress");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -51,9 +53,11 @@ public class Database {
         try {
             readDBLoginAcct();
             Class.forName("com.mysql.cj.jdbc.Driver");     // driver for mysql
-            this.con = DriverManager.getConnection(
-                    // url = "jdbc:[db]://[ip address]:[port]/[db schema]"
-                    "jdbc:mysql://localhost:3306/foodorder", loginUsername, loginPassword);
+
+            // url = "jdbc:[db]://[ip address]:[port]/[db schema]"
+            String url = String.format("jdbc:mysql://%s:3306/foodorder", ipAddress);
+
+            this.con = DriverManager.getConnection(url, loginUsername, loginPassword);
         } catch (ClassNotFoundException | SQLException e) {
             Logger.getLogger(Database.class.getName()).log(Level.SEVERE, e.getMessage(), e);
         }

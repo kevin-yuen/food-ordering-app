@@ -9,20 +9,23 @@ package component;
  *                      getName()
  *
  * @author Kevin Yuen
- * @lastUpdatedDate 2/19/2024
+ * @lastUpdatedDate 3/6/2024
+ *
+ * ******************************
+ *          CHANGE LOG
+ * ******************************
+ * 1. Changed this class to abstract class as the logic in .viewMenu() and .requestUserFood() is shared across
+ *      in its child classes, while .getName() is unique in its child classes.
  */
 
 import controller.ServerController;
 
 import java.util.*;
 
-public class Person {
+public abstract class Person {
     Scanner scanner = new Scanner(System.in);
-    private String name;
 
-    public Person(String name) {
-        this.name = name;
-    }
+    public Person() {}
 
     /**
      * This function forwards user request to serverController to render Menu View.
@@ -69,7 +72,5 @@ public class Person {
      *
      * @return the default name of the person
      */
-    public String getName() {
-        return this.name;
-    }
+    public abstract String getName();
 }

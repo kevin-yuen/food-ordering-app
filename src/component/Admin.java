@@ -10,10 +10,11 @@ package component;
 import java.util.*;
 
 public class Admin extends Person {
+    private String name;
     Scanner scanner = new Scanner(System.in);
 
     public Admin(String name) {
-        super(name);
+        this.name = name;
     }
 
     /**
@@ -123,5 +124,10 @@ public class Admin extends Person {
             }
         } while (!isFoodMaxQtyValid);
         return foodMaxQty;
+    }
+
+    @Override
+    public String getName() {
+        return this.name;
     }
 }

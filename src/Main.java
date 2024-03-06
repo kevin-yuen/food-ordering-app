@@ -16,7 +16,7 @@ public class Main {
         Database db = new Database();
 
         Admin admin = new Admin("Store Manager");
-        Customer customer = new Customer("Customer");
+        Customer customer = new Customer();
         MenuModel menuModel = new MenuModel(db);
         CartModel cartModel = new CartModel(db);
         ServerController serverController = new ServerController(menuModel, cartModel);
