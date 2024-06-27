@@ -52,6 +52,7 @@ public class Database {
     public void createDBConnection() {
         try {
             readDBLoginAcct();
+
             Class.forName("com.mysql.cj.jdbc.Driver");     // driver for mysql
 
             // url = "jdbc:[db]://[ip address]:[port]/[db schema]"
