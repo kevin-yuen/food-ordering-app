@@ -13,5 +13,3 @@
         <li>SQL to perform CRUD operations</li>
         <li>Establish database connectivity</li>
 </ul>
-
-<p>To understand how the application works, please download the <b>demo.mov</b> file.</p>
